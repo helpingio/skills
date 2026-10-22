@@ -1,0 +1,3963 @@
+{
+  "components": {
+    "schemas": {
+      "AllowedTools": {
+        "description": "Restricts this turn to a subset of the tools on offer.\n\n`mode` of `auto` lets the model choose from that subset or answer\ndirectly; `required` makes it call one of them. Every tool named here\nmust also be among the tools available to this request.",
+        "properties": {
+          "mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolChoiceValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/SpecificToolChoice"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tools"
+        ],
+        "type": "object"
+      },
+      "Annotation": {
+        "description": "An annotation attached to a span of output text.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlCitation"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "url_citation"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "AssistantMessageItem": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {
+                "$ref": "#/components/schemas/MessageContent"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phase": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MessagePhase"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A message from the assistant."
+      },
+      "ContentPart": {
+        "description": "One piece of message content, discriminated by `type`.\n\nThe same set covers both directions: input text and attachments on the\nway in, output text, refusals, and reasoning on the way out. A part you\nsend needs only the fields its own `type` defines.",
+        "oneOf": [
+          {
+            "description": "Text you are sending to the model.",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "input_text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Text the model produced.\n\n`annotations` carries any citations for spans of this text.\n`logprobs` carries per-token log probabilities; it is an empty array on\nevery response this surface produces today, because log probabilities\nare never requested from a provider.",
+            "properties": {
+              "annotations": {
+                "items": {
+                  "$ref": "#/components/schemas/Annotation"
+                },
+                "type": "array"
+              },
+              "logprobs": {
+                "items": {
+                  "$ref": "#/components/schemas/LogProb"
+                },
+                "type": "array"
+              },
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "output_text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Plain text, where neither direction is implied.",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A summary of the model's reasoning.",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "summary_text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "Reasoning text produced by the model.",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "reasoning_text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "The model declined to answer, and why.",
+            "properties": {
+              "refusal": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "refusal"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "refusal",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "An image you are sending to the model.\n\n`image_url` accepts a URL or a data URL. `detail` asks for a\nfidelity; omit it to let the model choose.",
+            "properties": {
+              "detail": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ImageDetail"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "enum": [
+                  "input_image"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A file you are sending to the model, by URL or inline contents.",
+            "properties": {
+              "file_data": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "file_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "filename": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "enum": [
+                  "input_file"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "A video you are sending to the model.",
+            "properties": {
+              "type": {
+                "enum": [
+                  "input_video"
+                ],
+                "type": "string"
+              },
+              "video_url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "video_url",
+              "type"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "ConversationItemList": {
+        "description": "A page of a conversation's items.\n\n`first_id` and `last_id` are always present, as empty strings on an empty\npage. A client paginating with `after` uses `last_id`, and `has_more` is what\ntells it whether to ask again.",
+        "properties": {
+          "data": {
+            "description": "The items, in the order you asked for.",
+            "items": {
+              "$ref": "#/components/schemas/ItemField"
+            },
+            "type": "array"
+          },
+          "first_id": {
+            "description": "The id of the first item on this page.",
+            "type": "string"
+          },
+          "has_more": {
+            "description": "Whether more items exist after this page.",
+            "type": "boolean"
+          },
+          "helpingio:unreadable": {
+            "description": "Items on this page that are stored but could not be read. The other\nitems are returned in `data`. Omitted when every item was read.",
+            "items": {
+              "$ref": "#/components/schemas/UnreadableItem"
+            },
+            "type": "array"
+          },
+          "last_id": {
+            "description": "The id of the last item on this page; pass it as `after` for the next\npage.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `list`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data",
+          "has_more",
+          "first_id",
+          "last_id"
+        ],
+        "type": "object"
+      },
+      "ConversationParam": {
+        "description": "The `conversation` a response belongs to: an id, or an object carrying one.",
+        "oneOf": [
+          {
+            "description": "The conversation's opaque id.",
+            "type": "string"
+          },
+          {
+            "$ref": "#/components/schemas/ConversationRef",
+            "description": "An object carrying the conversation's opaque id."
+          }
+        ]
+      },
+      "ConversationRef": {
+        "description": "The object form of `conversation`.",
+        "properties": {
+          "id": {
+            "description": "The conversation's opaque id.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "ConversationResource": {
+        "description": "A conversation.\n\nOpenAI requires all four fields, so none of them is optional here and none\nis skipped when empty. `metadata` in particular: a conversation with no\nlabels answers with `{}`, never with the field absent.",
+        "properties": {
+          "created_at": {
+            "description": "When the conversation was created, in seconds since the Unix epoch.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "description": "The conversation's opaque id, `conv_...`.",
+            "type": "string"
+          },
+          "metadata": {
+            "description": "The customer's own labels on this conversation.",
+            "type": "object"
+          },
+          "object": {
+            "description": "Always `conversation`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "CreateConversationBody": {
+        "description": "Create a conversation.\n\nBoth fields are optional: `POST /v1/conversations` with an empty body is a\nvalid call and gives you an empty conversation.",
+        "properties": {
+          "items": {
+            "description": "Items to seed the conversation with, up to 20.\n\nSeeded items become part of the conversation's context: the next\nresponse on this conversation sees them.",
+            "items": {
+              "$ref": "#/components/schemas/ItemParam"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "metadata": {
+            "description": "Labels to attach: up to 16 pairs, keys up to 64 characters, values up\nto 512.",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "CreateConversationItemsBody": {
+        "description": "Add items to a conversation.",
+        "properties": {
+          "items": {
+            "description": "The items to add, up to 20 per call.",
+            "items": {
+              "$ref": "#/components/schemas/ItemParam"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "CreateResponseBody": {
+        "description": "The body of a create-response request.\n\nFields you omit take their defaults, and fields this API does not\nrecognize are ignored rather than refused, so a newer client stays\ncompatible with an older server.\n\nEvery field of this body has one of four outcomes on this API: it is\napplied, it is refused with an error that names it, it is accepted and not\napplied, or it is advisory and the response reports what was applied rather\nthan what you sent. The generation settings are applied when the\nmodel supports them, and refused with an error that names the model and\nthe field when it does not.\n\n`truncation` IS applied: `disabled`, the default, refuses a turn that will\nnot fit the model's context window, and `auto` lets the oldest turns be\ndropped so it fits.\n\nThe compatibility page says which outcome each field has, and its tables\nare generated from the same classification the server refuses from.",
+        "properties": {
+          "background": {
+            "description": "Runs the response in the background.\n\nNot accepted today: `background: true` is refused. A non-streaming\nrequest that outlives its wait window already returns the response\nin progress for you to retrieve later, which covers the same need.",
+            "type": "boolean"
+          },
+          "conversation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConversationParam"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The conversation this response belongs to.\n\nEither the conversation's id as a string, or an object carrying it.\nThe conversation's items are the context for this response, and this\nresponse's input and output are added to it when it completes.\n\nCannot be combined with `previous_response_id`: both name a\nconversation, and a request that names two is refused rather than\nresolved by precedence."
+          },
+          "frequency_penalty": {
+            "description": "Penalty applied in proportion to how often a token has appeared.\n\nApplied when the model accepts it. When the model does not,\nor the value is outside the range the model accepts, the request is\nrefused with an error that names the model and the field.\nThe response reports the value it was generated with, and 0 when no\npenalty was applied.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "helpingio:memory": {
+            "description": "Turn memory on for the conversation this response starts.\n\nSet on a conversation's first response. With `true`, the model keeps\nfacts about the person and reads them back on later turns. Later turns\nkeep what the first one chose: the same value again changes nothing,\nand a different one is refused.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "include": {
+            "description": "Extras to return that are omitted by default.",
+            "items": {
+              "$ref": "#/components/schemas/Include"
+            },
+            "type": "array"
+          },
+          "input": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InputParam"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The input for this turn."
+          },
+          "instructions": {
+            "description": "Steering text for this turn only.\n\nApplies to this request and is not inherited by later turns.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "max_output_tokens": {
+            "description": "Caps the tokens this response may produce.\n\nThe smallest accepted value is 16.",
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "max_tool_calls": {
+            "description": "Caps how many tool calls the model may make while generating this\nresponse.\n\nCounts every tool call, not only built-in tools, across every turn of\nthe response. Your organization's policy also limits how many calls one\nturn may make. Calls past either limit are neither returned nor run,\nand `helpingio:tool_calls_dropped` on the response says how many were\ncut. The smallest accepted value is 1.",
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "metadata": {
+            "description": "Arbitrary metadata to attach, echoed back on the response.",
+            "type": "object"
+          },
+          "model": {
+            "description": "The model to run, either bare or as `provider/model`.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parallel_tool_calls": {
+            "description": "Whether the model may request several tool calls at once.\n\nApplied when the model accepts it. When the model does not,\nor the value is outside the range the model accepts, the request is\nrefused with an error that names the model and the field.\nThe response reports the value it was generated with, and true when\nnone was set.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "presence_penalty": {
+            "description": "Penalty applied to tokens that have already appeared.\n\nApplied when the model accepts it. When the model does not,\nor the value is outside the range the model accepts, the request is\nrefused with an error that names the model and the field.\nThe response reports the value it was generated with, and 0 when no\npenalty was applied.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "previous_response_id": {
+            "description": "Continues the conversation that produced this response id.\n\nThe API keeps the history, so a later turn sends only the new input\nrather than replaying what came before.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prompt_cache_key": {
+            "description": "A key that groups requests which share a prompt prefix.\n\nAdvisory. What this API does with it is on the compatibility page.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reasoning": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasoningConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reasoning settings.\n\nNot accepted today: sending this is refused rather than ignored,\nbecause a caller who sets it should not believe it was applied."
+          },
+          "safety_identifier": {
+            "description": "An opaque identifier for the end user this request is on behalf of,\nused to detect abuse by one end user without restricting your whole\nkey.\n\nSent on the model calls this response makes for your request, where\nthe model's provider has a per-end-user field, as a keyed hash of your\nvalue rather than the value itself. The response reports the value\nyou sent. A request that sends tool output keeps the value of the\nrequest that asked for the tool call.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "service_tier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServiceTier"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The service tier to run under.\n\nAdvisory. What this API does with it is on the compatibility page."
+          },
+          "store": {
+            "description": "Whether the response is stored so it can be retrieved later.\n\nDefaults to true, and true is the only value this API accepts today:\n`store: false` is refused rather than silently stored.",
+            "type": "boolean"
+          },
+          "stream": {
+            "description": "Streams the response as server-sent events instead of returning it\nin one body.",
+            "type": "boolean"
+          },
+          "stream_options": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StreamOptions"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Options that apply only when `stream` is true."
+          },
+          "temperature": {
+            "description": "Sampling temperature.\n\nApplied when the model accepts it. When the model does not,\nor the value is outside the range the model accepts, the request is\nrefused with an error that names the model and the field.\nWhen you omit it, the model's own default\napplies. The response reports the temperature it was generated\nwith, and 1 when none was set.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TextConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Settings for the response text, including a required output shape.\n\n`format` sets the output shape: `json_schema` constrains the output\nto the schema you supply, and must carry one. `verbosity` sets how\nmuch detail to aim for. Each is applied when the model\naccepts it, and refused with an error that names the model and the\nfield when it does not. The response reports the format and\nverbosity it was generated under."
+          },
+          "tool_choice": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolChoice"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How the model should decide about calling those tools."
+          },
+          "tools": {
+            "description": "The tools the model may call on this turn.",
+            "items": {
+              "$ref": "#/components/schemas/Tool"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "top_logprobs": {
+            "description": "How many alternative tokens to report log probabilities for.\n\nNo current model returns log probabilities, so a request that sets\nthis is refused with an error that names the model and the field. The\nresponse reports 0.",
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "top_p": {
+            "description": "Nucleus sampling cutoff.\n\nApplied when the model accepts it. When the model does not,\nor the value is outside the range the model accepts, the request is\nrefused with an error that names the model and the field.\nWhen you omit it, the model's own default\napplies. The response reports the value it was generated with, and\n1 when none was set.",
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "truncation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Truncation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What to do when the conversation no longer fits the model's context\nwindow.\n\n`disabled`, the default, refuses the request with a 400 and the code\n`context_length_exceeded`: nothing is dropped behind your back.\n`auto` lets the oldest turns be dropped so the request can proceed.\n\nThe size of a turn is estimated rather than tokenized, so the refusal\nsits a little inside the model's real limit; the compatibility page\nsays what that means in practice."
+          },
+          "user": {
+            "description": "Deprecated in favor of `safety_identifier`.\n\nWhen `safety_identifier` is absent, this value is used as it would\nbe: the end user this request is on behalf of. When both are sent,\n`safety_identifier` is used. It does not group requests for caching.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "DeletedConversationResource": {
+        "description": "The answer to a conversation delete.",
+        "properties": {
+          "deleted": {
+            "description": "Always `true`.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "The conversation's opaque id, echoed from the request.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `conversation.deleted`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "deleted"
+        ],
+        "type": "object"
+      },
+      "ErrorPayload": {
+        "description": "The body of a streaming `error` event.\n\nArrives in-band on the event stream when the response could not be\nresolved. The stream ends after it.",
+        "properties": {
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "param": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "message"
+        ],
+        "type": "object"
+      },
+      "FunctionCallField": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "arguments": {
+                "type": "string"
+              },
+              "call_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ItemStatus"
+              }
+            },
+            "required": [
+              "id",
+              "call_id",
+              "name",
+              "arguments",
+              "status"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A tool call the model wants you to run.\n\nRun it and send the result back as a function call output, quoting\n`call_id`."
+      },
+      "FunctionCallItem": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "arguments": {
+                "type": "string"
+              },
+              "call_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemStatus"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "call_id",
+              "name",
+              "arguments"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A tool call, as you replay it back on a later turn.\n\n`call_id` is what ties this call to its output."
+      },
+      "FunctionCallOutputField": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "call_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "output": {
+                "$ref": "#/components/schemas/MessageContent"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ItemStatus"
+              }
+            },
+            "required": [
+              "id",
+              "call_id",
+              "output",
+              "status"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A tool result, echoed back on the response."
+      },
+      "FunctionCallOutputItem": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "call_id": {
+                "type": "string"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "output": {
+                "$ref": "#/components/schemas/MessageContent"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemStatus"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "call_id",
+              "output"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "The result of a tool call, sent back so the model can continue.\n\n`call_id` must be the one from the call this answers."
+      },
+      "FunctionTool": {
+        "description": "A function the model may call.\n\n`parameters` is a JSON Schema describing the arguments. `strict` asks the\nmodel to follow that schema exactly. When a tool is echoed back on a\nresponse, `description`, `parameters`, and `strict` are always present,\nand are `null` where you did not set them.",
+        "properties": {
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parameters": {},
+          "strict": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "GatewayModel": {
+        "description": "One model you can call, identified as `provider/model`.",
+        "properties": {
+          "created": {
+            "description": "When the model became available, in Unix seconds.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `model`.",
+            "type": "string"
+          },
+          "owned_by": {
+            "description": "The provider that serves it.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created",
+          "owned_by"
+        ],
+        "type": "object"
+      },
+      "GatewayModelsResponse": {
+        "description": "The models in the catalog.",
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/GatewayModel"
+            },
+            "type": "array"
+          },
+          "object": {
+            "description": "Always `list`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data"
+        ],
+        "type": "object"
+      },
+      "ImageDetail": {
+        "description": "How much fidelity to read an input image at.",
+        "enum": [
+          "low",
+          "high",
+          "original",
+          "auto"
+        ],
+        "type": "string"
+      },
+      "Include": {
+        "description": "Optional extras to return that are omitted by default.\n\nName one in `include` to have it present on the response. Every value the\nResponses API defines is recognized. `reasoning.encrypted_content` is\nreturned; `message.output_text.logprobs` is refused on a model that does not\nproduce log probabilities; the other six are refused, because they name\ntools or input this API does not offer.",
+        "enum": [
+          "reasoning.encrypted_content",
+          "message.output_text.logprobs",
+          "message.input_image.image_url",
+          "file_search_call.results",
+          "web_search_call.results",
+          "web_search_call.action.sources",
+          "computer_call_output.output.image_url",
+          "code_interpreter_call.outputs"
+        ],
+        "type": "string"
+      },
+      "IncompleteDetails": {
+        "description": "Why a response stopped before it was finished.",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "type": "object"
+      },
+      "InputParam": {
+        "description": "What to send the model: either a single string or a list of items.\n\nA bare string is shorthand for one user message.",
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/ItemParam"
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "InputTokensDetails": {
+        "description": "A breakdown of the input tokens counted.\n\nBoth fields are SUBSETS of `input_tokens`, not additions to it.",
+        "properties": {
+          "cache_write_tokens": {
+            "description": "Input tokens written INTO the provider's prompt cache.\n\nA provider that does not charge for a cache write reports `0` here.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "cached_tokens": {
+            "description": "Input tokens served from the provider's prompt cache.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cached_tokens",
+          "cache_write_tokens"
+        ],
+        "type": "object"
+      },
+      "ItemField": {
+        "description": "One item of output, discriminated by `type`.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageField"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "message"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCallField"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function_call"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCallOutputField"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function_call_output"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReasoningField"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "reasoning"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "ItemOrder": {
+        "description": "How to order a page of items.",
+        "enum": [
+          "asc",
+          "desc"
+        ],
+        "type": "string"
+      },
+      "ItemParam": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/TaggedItemParam"
+          },
+          {
+            "$ref": "#/components/schemas/ItemReference"
+          }
+        ],
+        "description": "One item of input.\n\nEither a typed item or, with no `type` at all, a reference to an existing\nitem by id. An item carrying a `type` this API does not define is\nrejected; it is never read as a reference."
+      },
+      "ItemReference": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A pointer to an item that already exists, by id."
+      },
+      "ItemStatus": {
+        "description": "How far along an output item is.\n\n`in_progress` while the item is still being produced, `completed` when it\nis final, and `incomplete` when the response stopped before the item was\nfinished.",
+        "enum": [
+          "in_progress",
+          "completed",
+          "incomplete"
+        ],
+        "type": "string"
+      },
+      "LogProb": {
+        "description": "The log probability of one output token.\n\nThis surface does not produce log probabilities yet: `top_logprobs` is\naccepted and not applied, and `include: [\"message.output_text.logprobs\"]`\nis accepted and not acted on, so the `logprobs` arrays that carry this\ntype are empty on every response today. They are arrays rather than nulls\nbecause the schema requires an array, and an empty one is the honest\nanswer for \"none were produced\".",
+        "properties": {
+          "bytes": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "logprob": {
+            "format": "double",
+            "type": "number"
+          },
+          "token": {
+            "type": "string"
+          },
+          "top_logprobs": {
+            "items": {
+              "$ref": "#/components/schemas/TopLogProb"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "token",
+          "logprob"
+        ],
+        "type": "object"
+      },
+      "MessageContent": {
+        "description": "Message content as either a plain string or a list of content parts.\n\nA bare string is shorthand for a single text part, so the two forms are\ninterchangeable wherever this appears.",
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/ContentPart"
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "MessageField": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {
+                "items": {
+                  "$ref": "#/components/schemas/ContentPart"
+                },
+                "type": "array"
+              },
+              "id": {
+                "type": "string"
+              },
+              "phase": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MessagePhase"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "role": {
+                "$ref": "#/components/schemas/MessageRole"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ItemStatus"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "role",
+              "content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A message the model produced."
+      },
+      "MessageItemParam": {
+        "description": "A message item, discriminated by `role`.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserMessageItem"
+              },
+              {
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "user"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "role"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssistantMessageItem"
+              },
+              {
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "assistant"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "role"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SystemMessageItem"
+              },
+              {
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "system"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "role"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SystemMessageItem"
+              },
+              {
+                "properties": {
+                  "role": {
+                    "enum": [
+                      "developer"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "role"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "MessagePhase": {
+        "description": "Whether an assistant message is the answer or commentary alongside it.\n\n`final_answer` marks the message meant as the reply; `commentary` marks\nnarration produced on the way there.",
+        "enum": [
+          "commentary",
+          "final_answer"
+        ],
+        "type": "string"
+      },
+      "MessageRole": {
+        "description": "Who a message came from.",
+        "enum": [
+          "user",
+          "assistant",
+          "system",
+          "developer"
+        ],
+        "type": "string"
+      },
+      "OutputTokensDetails": {
+        "description": "A breakdown of the output tokens counted.",
+        "properties": {
+          "reasoning_tokens": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "reasoning_tokens"
+        ],
+        "type": "object"
+      },
+      "ReasoningConfig": {
+        "description": "Reasoning settings.\n\nOn a response this reports the settings that applied. This API does not\naccept it on a request: sending this field is refused rather than\nignored.",
+        "properties": {
+          "effort": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasoningEffort"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasoningSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "ReasoningEffort": {
+        "description": "How much reasoning the model should spend before answering.\n\nHigher settings trade latency and cost for more deliberation. `none`\ndisables reasoning where the model supports doing so.",
+        "enum": [
+          "none",
+          "low",
+          "medium",
+          "high",
+          "xhigh"
+        ],
+        "type": "string"
+      },
+      "ReasoningField": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {
+                "items": {
+                  "$ref": "#/components/schemas/ContentPart"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ]
+              },
+              "encrypted_content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "summary": {
+                "items": {
+                  "$ref": "#/components/schemas/ContentPart"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Reasoning the model produced.\n\n`encrypted_content` is present only when you asked for it in `include`."
+      },
+      "ReasoningItemParam": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {},
+              "encrypted_content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "summary": {
+                "items": {
+                  "$ref": "#/components/schemas/ContentPart"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "description": "Reasoning from an earlier turn, replayed back.\n\n`encrypted_content` is opaque: pass it back unchanged to carry reasoning\nacross turns."
+      },
+      "ReasoningSummary": {
+        "description": "How much of the model's reasoning to summarize back to you, when a summary is produced at all.",
+        "enum": [
+          "concise",
+          "detailed",
+          "auto"
+        ],
+        "type": "string"
+      },
+      "ResponseConversation": {
+        "description": "The conversation a response belongs to.\n\nIts items are the context the response ran on, and the response's own\ninput and output are added to it.",
+        "properties": {
+          "id": {
+            "description": "The conversation's opaque id, `conv_...`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "ResponseError": {
+        "description": "Why a response failed, carried on the response object itself.\n\nA response that fails after it started is not an HTTP error: the request\nsucceeds and the response object carries `status: \"failed\"` and this.",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "helpingio:schema_source": {
+            "description": "On `output_schema_mismatch` only: which schema the reply was checked\nagainst, `text.format` (the request's) or `declared` (the output the\nworkflow declares). Absent on every other code.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ResponseFormat": {
+        "description": "The shape the response text should take.\n\n`text` is unconstrained prose, `json_object` asks for any JSON object,\nand `json_schema` constrains the output to a schema you supply.",
+        "oneOf": [
+          {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "type": {
+                "enum": [
+                  "json_object"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "schema": {},
+              "strict": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "type": {
+                "enum": [
+                  "json_schema"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "ResponseResource": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "background": {
+                "type": "boolean"
+              },
+              "completed_at": {
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "conversation": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResponseConversation"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "The conversation this response belongs to.\n\nEvery response on this API belongs to one, whether you named a\nconversation on the request or let the API make one for you, so\nthis is the id to hand to the Conversations API or to a later turn."
+              },
+              "created_at": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "error": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResponseError"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "frequency_penalty": {
+                "format": "double",
+                "type": "number"
+              },
+              "id": {
+                "type": "string"
+              },
+              "incomplete_details": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/IncompleteDetails"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "instructions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "max_output_tokens": {
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "max_tool_calls": {
+                "description": "The maximum number of tool calls this response was allowed to make.\n\nThe `max_tool_calls` sent with the request that started the turn, and\n`null` when that request sent none. A request that sends tool output\nkeeps that value: a `max_tool_calls` sent with it is ignored.",
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "metadata": {
+                "description": "Whatever metadata you attached to the request, echoed back.\n\nAlways present, and `null` when you attached none."
+              },
+              "model": {
+                "type": "string"
+              },
+              "object": {
+                "description": "Always `response`.",
+                "type": "string"
+              },
+              "output": {
+                "items": {
+                  "$ref": "#/components/schemas/ItemField"
+                },
+                "type": "array"
+              },
+              "parallel_tool_calls": {
+                "type": "boolean"
+              },
+              "presence_penalty": {
+                "format": "double",
+                "type": "number"
+              },
+              "previous_response_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "prompt_cache_key": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reasoning": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ReasoningConfig"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "safety_identifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "service_tier": {
+                "description": "The service tier this response ran under.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Where this response is in its lifecycle.\n\nOne of `queued`, `in_progress`, `completed`, `failed`, `incomplete`,\nor `cancelled`. `queued` and `in_progress` mean it is still running\nand can be retrieved again later; the rest are terminal. Treat it as\nan open string so a status added later does not break your client.",
+                "type": "string"
+              },
+              "store": {
+                "type": "boolean"
+              },
+              "temperature": {
+                "format": "double",
+                "type": "number"
+              },
+              "text": {
+                "$ref": "#/components/schemas/TextConfig"
+              },
+              "tool_choice": {
+                "$ref": "#/components/schemas/ToolChoice"
+              },
+              "tools": {
+                "items": {
+                  "$ref": "#/components/schemas/Tool"
+                },
+                "type": "array"
+              },
+              "top_logprobs": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "top_p": {
+                "format": "double",
+                "type": "number"
+              },
+              "truncation": {
+                "$ref": "#/components/schemas/Truncation"
+              },
+              "usage": {
+                "$ref": "#/components/schemas/Usage",
+                "description": "What this response consumed.\n\nABSENT while the response is still running, and present once it\nsettles. A response that is `queued` or `in_progress` has spent\nnothing you can be billed for yet, so there is no figure to report,\nand the field is left out rather than sent as `null`."
+              }
+            },
+            "required": [
+              "id",
+              "object",
+              "created_at",
+              "completed_at",
+              "status",
+              "incomplete_details",
+              "model",
+              "previous_response_id",
+              "instructions",
+              "output",
+              "error",
+              "tools",
+              "tool_choice",
+              "truncation",
+              "parallel_tool_calls",
+              "text",
+              "top_p",
+              "presence_penalty",
+              "frequency_penalty",
+              "top_logprobs",
+              "temperature",
+              "reasoning",
+              "max_output_tokens",
+              "max_tool_calls",
+              "store",
+              "background",
+              "service_tier",
+              "metadata",
+              "safety_identifier",
+              "prompt_cache_key"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A response: one model turn, with everything it produced and the settings\nit ran under.\n\nThe settings are echoed back as they were applied, which is not always\nwhat you sent: values you omitted are filled in, and values capped by\nyour organization's policy are reported at the capped figure."
+      },
+      "ServiceTier": {
+        "description": "The service tier a request asks for.",
+        "enum": [
+          "auto",
+          "default",
+          "flex",
+          "priority"
+        ],
+        "type": "string"
+      },
+      "SpecificFunction": {
+        "description": "Names the function the model is being told to call.",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "SpecificToolChoice": {
+        "description": "Requires the model to call one named tool.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SpecificFunction"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "StreamOptions": {
+        "description": "Options that apply only when `stream` is true.",
+        "properties": {
+          "include_obfuscation": {
+            "description": "Pads each streamed delta event with an `obfuscation` string so the\nsize of the event does not track the length of the text in it.\n\nOn unless you set it to false, which turns the padding off.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "StreamingEvent": {
+        "description": "The streaming event union. Variant order mirrors the response lifecycle:\ncreation, item lifecycle, content parts, deltas, terminals.",
+        "oneOf": [
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.created"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.queued"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.in_progress"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "item": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemField"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.output_item.added"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "output_index",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "item": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemField"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.output_item.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "output_index",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "part": {
+                "$ref": "#/components/schemas/ContentPart"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.content_part.added"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "part",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "part": {
+                "$ref": "#/components/schemas/ContentPart"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.content_part.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "part",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "delta": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "logprobs": {
+                "items": {
+                  "$ref": "#/components/schemas/LogProb"
+                },
+                "type": "array"
+              },
+              "obfuscation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.output_text.delta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "delta",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "logprobs": {
+                "items": {
+                  "$ref": "#/components/schemas/LogProb"
+                },
+                "type": "array"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "response.output_text.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "annotation": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Annotation"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "annotation_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.output_text.annotation.added"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "annotation_index",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "delta": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.refusal.delta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "delta",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "refusal": {
+                "type": "string"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.refusal.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "refusal",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "delta": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "obfuscation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.function_call_arguments.delta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "delta",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "arguments": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.function_call_arguments.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "arguments",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "delta": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "obfuscation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_text.delta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "delta",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_text.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "content_index",
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "part": {
+                "$ref": "#/components/schemas/ContentPart"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "summary_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_summary_part.added"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "summary_index",
+              "part",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "part": {
+                "$ref": "#/components/schemas/ContentPart"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "summary_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_summary_part.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "summary_index",
+              "part",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "delta": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string"
+              },
+              "obfuscation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "summary_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_summary_text.delta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "summary_index",
+              "delta",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "item_id": {
+                "type": "string"
+              },
+              "output_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "summary_index": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "text": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "response.reasoning_summary_text.done"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "item_id",
+              "output_index",
+              "summary_index",
+              "text",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.completed"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.failed"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/ResponseResource"
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "response.incomplete"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "response",
+              "type"
+            ],
+            "type": "object"
+          },
+          {
+            "description": "The stream failed and this is the last event you receive.\n\n`code`, `message` and `param` are on the event itself, not nested:\nread `message` for what went wrong and `code` to branch on it. The\ncodes are the same ones a non-streaming error carries.",
+            "properties": {
+              "code": {
+                "description": "Nullable in the schema; this surface always sets it.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "param": {
+                "description": "Nullable in the schema; this surface has no parameter to name.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sequence_number": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "type": {
+                "enum": [
+                  "error"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "sequence_number",
+              "message",
+              "type"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "SystemMessageItem": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {
+                "$ref": "#/components/schemas/MessageContent"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A system or developer message: instructions rather than conversation."
+      },
+      "TaggedAllowedTools": {
+        "description": "The `allowed_tools` form of `tool_choice`.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllowedTools"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "allowed_tools"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "TaggedItemParam": {
+        "description": "An input item, discriminated by `type`.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageItemParam"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "message"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCallItem"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function_call"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCallOutputItem"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function_call_output"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReasoningItemParam"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "reasoning"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ItemReference"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "item_reference"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "TextConfig": {
+        "description": "Settings for the response text.",
+        "properties": {
+          "format": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResponseFormat"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verbosity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Verbosity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "Tool": {
+        "description": "A tool offered to the model, discriminated by `type`.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionTool"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "function"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      },
+      "ToolChoice": {
+        "description": "How the model should decide about calling tools.\n\nEither a bare string (`none`, `auto`, or `required`) or an object that\nnames a specific tool or restricts the choice to a subset.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ToolChoiceValue"
+          },
+          {
+            "$ref": "#/components/schemas/SpecificToolChoice"
+          },
+          {
+            "$ref": "#/components/schemas/TaggedAllowedTools"
+          }
+        ]
+      },
+      "ToolChoiceValue": {
+        "description": "The string form of `tool_choice`.\n\n`auto` lets the model decide whether to call a tool, `required` makes it\ncall one, and `none` forbids tool calls for this turn.",
+        "enum": [
+          "none",
+          "auto",
+          "required"
+        ],
+        "type": "string"
+      },
+      "TopLogProb": {
+        "description": "One alternative token the model considered, with its log probability.",
+        "properties": {
+          "bytes": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "logprob": {
+            "format": "double",
+            "type": "number"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "logprob"
+        ],
+        "type": "object"
+      },
+      "Truncation": {
+        "description": "What to do when a conversation no longer fits the model's context window.\n\n`auto` lets the OLDEST turns be dropped so the request can proceed;\n`disabled` fails the request instead of dropping anything, and is the\ndefault (OpenAI's default too).\n\nOldest-first is the same end OpenAI documents dropping from: their own API\nreference words `auto` as \"dropping items from the beginning of the\nconversation\". The turn the caller just sent is never a candidate.",
+        "enum": [
+          "auto",
+          "disabled"
+        ],
+        "type": "string"
+      },
+      "UnreadableItem": {
+        "description": "An item that is stored but could not be read.",
+        "properties": {
+          "code": {
+            "description": "Always `item_unreadable`.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The item's id. Retrieving it returns the same error.",
+            "type": "string"
+          },
+          "message": {
+            "description": "What went wrong.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "UpdateConversationBody": {
+        "description": "Replace a conversation's labels.\n\n`metadata` is required: this operation exists to set it. Send `{}` to clear.",
+        "properties": {
+          "metadata": {
+            "description": "The labels to store, replacing whatever was there.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "UrlCitation": {
+        "description": "A cited web source, with the span of output text it supports.\n\n`start_index` and `end_index` are offsets into that message's text.",
+        "properties": {
+          "end_index": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "start_index": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "start_index",
+          "end_index",
+          "title"
+        ],
+        "type": "object"
+      },
+      "Usage": {
+        "description": "What this response consumed.\n\nPresent on terminal responses, including failed ones, so you can see what\na failed response cost.",
+        "properties": {
+          "input_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "input_tokens_details": {
+            "$ref": "#/components/schemas/InputTokensDetails"
+          },
+          "output_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "output_tokens_details": {
+            "$ref": "#/components/schemas/OutputTokensDetails"
+          },
+          "total_tokens": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "input_tokens",
+          "output_tokens",
+          "total_tokens",
+          "input_tokens_details",
+          "output_tokens_details"
+        ],
+        "type": "object"
+      },
+      "UserMessageItem": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "content": {
+                "$ref": "#/components/schemas/MessageContent"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A message from the user."
+      },
+      "Verbosity": {
+        "description": "How much detail to aim for in the response text.",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "description": "An API key, presented as `Authorization: Bearer sk_...`.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "The base URL is `https://api.helping.io`, and every path starts with `/v1`, so an OpenAI SDK takes `https://api.helping.io/v1` as its base URL.",
+    "title": "helping.io API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/conversations": {
+      "post": {
+        "description": "Both fields are optional: an empty body gives you an empty conversation.\n`items` seeds it with up to 20 items, which the next response on this\nconversation will see as context.",
+        "operationId": "v1_create_conversation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "items": [
+                  {
+                    "content": "Hello.",
+                    "role": "user",
+                    "type": "message"
+                  }
+                ],
+                "metadata": {
+                  "topic": "demo"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateConversationBody"
+              }
+            }
+          },
+          "description": "The conversation to create.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResource"
+                }
+              }
+            },
+            "description": "The conversation."
+          },
+          "400": {
+            "description": "Metadata outside the documented limits, or more than 20 items (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "409": {
+            "description": "The Idempotency-Key was already used and its result cannot be returned for this request, or its first request is still being processed (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Create a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      }
+    },
+    "/v1/conversations/{conversation_id}": {
+      "delete": {
+        "description": "The conversation and its history stop being reachable and it can no longer\nbe continued. Deleting twice is not an error.",
+        "operationId": "v1_delete_conversation",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedConversationResource"
+                }
+              }
+            },
+            "description": "`{id, object: \"conversation.deleted\", deleted: true}`."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its delete allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Delete a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      },
+      "get": {
+        "operationId": "v1_get_conversation",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResource"
+                }
+              }
+            },
+            "description": "The conversation."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its retrieval allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Retrieve a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      },
+      "post": {
+        "description": "`metadata` is required: this operation exists to set it. Send `{}` to clear\nthe labels.",
+        "operationId": "v1_update_conversation",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "metadata": {
+                  "topic": "demo"
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConversationBody"
+              }
+            }
+          },
+          "description": "The metadata to store.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResource"
+                }
+              }
+            },
+            "description": "The conversation, with its new metadata."
+          },
+          "400": {
+            "description": "Missing metadata, or metadata outside the documented limits (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation, or one this key cannot reach."
+          },
+          "409": {
+            "description": "The Idempotency-Key was already used and its result cannot be returned for this request, or its first request is still being processed (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Replace a conversation's metadata.",
+        "tags": [
+          "Conversations"
+        ]
+      }
+    },
+    "/v1/conversations/{conversation_id}/items": {
+      "get": {
+        "description": "Items come back oldest first unless you ask for `desc`. Page with `after`,\npassing the `last_id` from the previous page.",
+        "operationId": "v1_list_conversation_items",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "How many items to return. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "`asc` for oldest first (the default), `desc` for newest first.",
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ItemOrder"
+            }
+          },
+          {
+            "description": "Return the items after this one, in the order you asked for.",
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Extras to return that are omitted by default.",
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/Include"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationItemList"
+                }
+              }
+            },
+            "description": "A page of items."
+          },
+          "400": {
+            "description": "An `after` this conversation has no such item for, or a limit outside 1..=500 (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its retrieval allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "List a conversation's items.",
+        "tags": [
+          "Conversations"
+        ]
+      },
+      "post": {
+        "description": "Up to 20 per call. Added items become part of the conversation's context:\nthe next response on it sees them.\n\nThe answer is the items you just added, not the whole conversation.",
+        "operationId": "v1_create_conversation_items",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Extras to return that are omitted by default.",
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/Include"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "items": [
+                  {
+                    "content": "Hello.",
+                    "role": "user",
+                    "type": "message"
+                  }
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateConversationItemsBody"
+              }
+            }
+          },
+          "description": "The items to add.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationItemList"
+                }
+              }
+            },
+            "description": "The items that were added."
+          },
+          "400": {
+            "description": "More than 20 items, or an item this API cannot store (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation, or one this key cannot reach."
+          },
+          "409": {
+            "description": "The Idempotency-Key was already used and its result cannot be returned for this request, or its first request is still being processed (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Add items to a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      }
+    },
+    "/v1/conversations/{conversation_id}/items/{item_id}": {
+      "delete": {
+        "description": "Only items you added can be removed. The answer is the conversation.",
+        "operationId": "v1_delete_conversation_item",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The item's id, as the item list returned it",
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResource"
+                }
+              }
+            },
+            "description": "The conversation the item was removed from."
+          },
+          "400": {
+            "description": "The item was produced by a response and cannot be removed (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation or item, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its delete allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Remove an item from a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      },
+      "get": {
+        "operationId": "v1_get_conversation_item",
+        "parameters": [
+          {
+            "description": "The opaque `conv_...` id of the conversation",
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The item's id, as the item list returned it",
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Extras to return that are omitted by default.",
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/Include"
+              },
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The item."
+          },
+          "400": {
+            "description": "An `include` value this API does not recognize."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such conversation or item, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its retrieval allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Retrieve one item of a conversation.",
+        "tags": [
+          "Conversations"
+        ]
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "description": "Ids are canonical `provider/model` and are what `model` accepts on a\nrequest. The list is the whole catalog: your organization's model policy\ncan still refuse a listed model, with `model_policy_violation`.",
+        "operationId": "v1_list_models",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayModelsResponse"
+                }
+              }
+            },
+            "description": "The models in the catalog."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "List the models in the catalog.",
+        "tags": [
+          "Models"
+        ]
+      }
+    },
+    "/v1/responses": {
+      "post": {
+        "description": "Send `input` and a `model`, or continue an existing conversation with\n`previous_response_id`. The API keeps the history, so a later turn sends\nonly the new input.\n\nSet `stream: true` to receive server-sent events instead of one body.\nWithout it the request waits a bounded time and, if the response is not\nfinished by then, returns it in progress for you to retrieve by id.\n\nTo answer a tool call, send its result as a `function_call_output` item\non the next turn, quoting the `call_id` from the call.",
+        "operationId": "v1_create_response",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "input": [
+                  {
+                    "content": "Say hello in exactly 3 words.",
+                    "role": "user",
+                    "type": "message"
+                  }
+                ],
+                "model": "anthropic/claude-sonnet-5"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateResponseBody"
+              }
+            }
+          },
+          "description": "The response to create.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseResource"
+                }
+              }
+            },
+            "description": "The response. With `stream: true` the body is a server-sent event stream instead, whose events carry this same object at its terminal (see the StreamingEvent schema). A non-streaming request waits up to 90 seconds; if the response is not finished by then it is returned in progress, with the same id, a `status` of `queued` or `in_progress`, and an empty `output`, rather than as an error. It keeps running, so retrieve it by that id for the result. A streamed response has no such bound."
+          },
+          "400": {
+            "description": "Malformed body, unknown/ambiguous model, or unsupported parameter (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "402": {
+            "description": "The organization has no payment method on file, so nothing was started."
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such `previous_response_id`, or one this key cannot reach."
+          },
+          "409": {
+            "description": "The Idempotency-Key was already used and its result cannot be returned for this request, or its first request is still being processed (the error envelope)"
+          },
+          "429": {
+            "description": "A rate limit, a spend budget or the organization's credit balance refused this request, or the model provider rate limited it; the error code says which."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "502": {
+            "description": "The model provider did not complete the request; retry shortly."
+          },
+          "503": {
+            "description": "The request could not be served this instant and nothing was created; retry after the Retry-After header."
+          },
+          "504": {
+            "description": "The wait for a result ended before one was available and no response could be read back for it."
+          }
+        },
+        "summary": "Create a response.",
+        "tags": [
+          "Responses"
+        ]
+      }
+    },
+    "/v1/responses/{response_id}": {
+      "delete": {
+        "description": "The response stops being readable and can no longer be continued. The rest\nof its conversation is untouched. Deleting twice is not an error.\n\nOnly the key that created the response can delete it.",
+        "operationId": "v1_delete_response",
+        "parameters": [
+          {
+            "description": "The opaque `resp_...` id of the response to delete",
+            "in": "path",
+            "name": "response_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "`{id, object: \"response.deleted\", deleted: true}`. The response stops being readable and can no longer be continued; the rest of its conversation is untouched. Deleting the same response twice is not an error."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such response, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its delete and cancel allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Delete a stored response.",
+        "tags": [
+          "Responses"
+        ]
+      },
+      "get": {
+        "description": "Returns the response's current state, including its `usage`, which is why\nthis is the endpoint to use for reconciling what a request cost. A\nresponse that failed comes back as a normal `200` whose object carries\n`status: \"failed\"` and an `error`.\n\nOnly the key that created a response can retrieve it. An id you cannot\naccess and an id that does not exist both answer `404`.",
+        "operationId": "v1_get_response",
+        "parameters": [
+          {
+            "description": "Extras to return that are omitted by default.",
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/Include"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "in": "path",
+            "name": "response_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseResource"
+                }
+              }
+            },
+            "description": "The stored response."
+          },
+          "400": {
+            "description": "An `include` value this API does not recognize, or a query parameter this endpoint does not support."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such response, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its retrieval allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Retrieve a stored response by id.",
+        "tags": [
+          "Responses"
+        ]
+      }
+    },
+    "/v1/responses/{response_id}/cancel": {
+      "post": {
+        "description": "A response that is still being generated stops, and comes back with status\n`cancelled`. You are billed for what had already been produced. A response\nthat has already finished comes back unchanged.\n\nOnly the key that created the response can cancel it.",
+        "operationId": "v1_cancel_response",
+        "parameters": [
+          {
+            "description": "The opaque `resp_...` id of the response to cancel",
+            "in": "path",
+            "name": "response_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseResource"
+                }
+              }
+            },
+            "description": "The response, as a retrieve would return it. A response that was still being generated is `cancelled`; one that had already finished is returned unchanged."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such response, or one this key cannot reach."
+          },
+          "429": {
+            "description": "This organization has exhausted its delete and cancel allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Cancel a response.",
+        "tags": [
+          "Responses"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://api.helping.io"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Create a response, streamed or returned whole, and retrieve, cancel or delete a stored response by its id.",
+      "name": "Responses"
+    },
+    {
+      "description": "Keep the history of a series of responses as a conversation, and read, add or remove its items.",
+      "name": "Conversations"
+    },
+    {
+      "description": "List the model ids a request's `model` field accepts.",
+      "name": "Models"
+    }
+  ]
+}
