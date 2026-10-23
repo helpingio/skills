@@ -18,7 +18,7 @@ not a delay.
 | `404` | `resource_not_found` | `not_found_error` | No | The path or the previous response named by this request is not available to you. |
 | `409` | `idempotency_conflict` | `invalid_request_error` | No | This Idempotency-Key was already used within the last 24 hours, and what it made cannot be returned for this request: the body differs, or this API key cannot read it. Nothing was created. |
 | `409` | `idempotency_in_progress` | `invalid_request_error` | No | The first request with this Idempotency-Key is still being processed. Nothing was created; send the request again shortly. |
-| `429` | `insufficient_credits` | `rate_limit_error` | No | The organization's credit balance is exhausted; top up in the billing settings. |
+| `429` | `insufficient_credits` | `rate_limit_error` | No | The organization's credit balance is exhausted; add credits in the billing settings. |
 | `429` | `insufficient_quota` | `insufficient_quota` | No | The organization has no active plan, or no credit balance to pay for the request; the message says which. |
 | `429` | `provider_rate_limited` | `rate_limit_error` | No | The model provider rate limited this request; retry, honoring Retry-After when one is present. |
 | `429` | `rate_limit_exceeded` | `rate_limit_error` | Yes | This request exceeded a rate limit that applies to you; retry after the Retry-After header. |
