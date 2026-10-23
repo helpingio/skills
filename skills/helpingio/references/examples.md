@@ -414,6 +414,23 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "id": "anthropic/claude-opus-5",
+      "object": "model",
+      "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-opus-5-5",
       "object": "model",
       "owned_by": "anthropic"
