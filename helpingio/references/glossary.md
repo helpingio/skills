@@ -23,6 +23,21 @@ names that appear in the documentation and on the wire.
 - **Revoke**: Disable a key immediately without deleting its record.
 - **helpingio:unreadable**: List field naming the items on a page that are stored but could not be read. The other items are returned as usual.
 - **helpingio:schema_source**: Error field: on a response that failed output_schema_mismatch, the schema the reply was checked against: text.format for the request's own, declared for the output the workflow declares.
+- **helpingio:pricing**: Field on each model of GET /v1/models: what the model costs your organization now, by prompt length where that matters, and every price already scheduled to replace it, in credits per million tokens. Absent when the model has no price it can state exactly.
+- **unit**: In helpingio:pricing, the unit every price is stated in: always credits_per_million_tokens.
+- **credits_per_million_tokens**: The unit of a price in helpingio:pricing: credits per million tokens of the meter it prices.
+- **current**: In helpingio:pricing, the price per meter in force now, for a prompt of any length or, when tiers is not empty, up to the first tier's threshold.
+- **tiers**: In helpingio:pricing, prices for longer prompts: each applies to a whole request whose prompt is above its threshold.
+- **above_prompt_tokens**: In a price tier, the prompt length in tokens above which the tier's prices apply to the whole request.
+- **scheduled**: In helpingio:pricing, prices already scheduled to replace the current ones, earliest first.
+- **prices**: In a price tier or a scheduled change, the price per meter in credits per million tokens.
+- **ends_at**: In helpingio:pricing, when this price stops; after it, requests for the model are refused until a new price is published.
+- **effective_from**: In a scheduled change, the instant its prices take effect.
+- **input_tokens**: Priced meter: input tokens read neither from nor into the provider's prompt cache.
+- **cache_read_tokens**: Priced meter: input tokens read from the provider's prompt cache.
+- **cache_write_5m_tokens**: Priced meter: input tokens written to a short-lived prompt cache entry.
+- **cache_write_1h_tokens**: Priced meter: input tokens written to a one-hour prompt cache entry.
+- **output_tokens**: Priced meter: output tokens, reasoning included.
 - **helpingio:tool_calls_dropped**: Response field: on a response that runs under a max_tool_calls (sent with the request that started the turn), how many tool calls were cut, which were neither returned nor run. Absent when nothing was cut.
 - **helpingio:usage**: Error field: on the 502 a non-streaming request answers when the model provider failed partway through its reply, the usage that reply was billed, in the shape of a response's usage. Absent when nothing was billed.
 - **helpingio:warnings**: Response field: a list of the request fields the response accepted and did not apply (type unsupported) or applied in place of another (type compatibility), each with its param and a message. Absent when there is nothing to report.

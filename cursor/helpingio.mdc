@@ -14,7 +14,7 @@ This project calls the helping.io API.
   Server side only; never ship a key to a client.
 - **One turn per request.** Send the new turn and `previous_response_id`.
   The API keeps the history: do not resend it.
-- **Extensions.** `helpingio:error` and `helpingio:memory` and `helpingio:schema_source` and `helpingio:tool_calls_dropped` and `helpingio:unreadable` and `helpingio:usage` and `helpingio:warnings` are the
+- **Extensions.** `helpingio:error` and `helpingio:memory` and `helpingio:pricing` and `helpingio:schema_source` and `helpingio:tool_calls_dropped` and `helpingio:unreadable` and `helpingio:usage` and `helpingio:warnings` are the
   helping.io fields on the wire. Ignore any `helpingio:` field you do not
   recognize.
 - **Errors.** Branch on `code`, never on the message. Honor `Retry-After`

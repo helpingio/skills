@@ -912,6 +912,17 @@
             "format": "int64",
             "type": "integer"
           },
+          "helpingio:pricing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ModelPricing"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the model costs you now and what it is scheduled to cost, in\ncredits per million tokens. Omitted when the model has no price this\nfield can state exactly."
+          },
           "id": {
             "type": "string"
           },
@@ -1353,6 +1364,54 @@
         ],
         "type": "string"
       },
+      "ModelPricing": {
+        "description": "A model's prices, now and scheduled.",
+        "properties": {
+          "current": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "The price per meter in force now, for a prompt of any length or, when\n`tiers` is not empty, up to the first tier's threshold.",
+            "propertyNames": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ends_at": {
+            "description": "When `current` stops: after it, requests for the model are refused\nuntil a new price is published. Absent when no end is scheduled.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scheduled": {
+            "description": "Prices already scheduled to replace `current`, earliest first.",
+            "items": {
+              "$ref": "#/components/schemas/ScheduledPrices"
+            },
+            "type": "array"
+          },
+          "tiers": {
+            "description": "Prices for longer prompts: each applies to a whole request whose\nprompt is above its threshold. Empty when the price does not depend on\nprompt length.",
+            "items": {
+              "$ref": "#/components/schemas/PriceTier"
+            },
+            "type": "array"
+          },
+          "unit": {
+            "description": "Always `credits_per_million_tokens`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit",
+          "current",
+          "tiers",
+          "scheduled"
+        ],
+        "type": "object"
+      },
       "OutputTokensDetails": {
         "description": "A breakdown of the output tokens counted.",
         "properties": {
@@ -1363,6 +1422,30 @@
         },
         "required": [
           "reasoning_tokens"
+        ],
+        "type": "object"
+      },
+      "PriceTier": {
+        "description": "The prices of a request whose prompt is above `above_prompt_tokens`.",
+        "properties": {
+          "above_prompt_tokens": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "prices": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "propertyNames": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "above_prompt_tokens",
+          "prices"
         ],
         "type": "object"
       },
@@ -1796,6 +1879,44 @@
           }
         ],
         "description": "A response: one model turn, with everything it produced and the settings\nit ran under.\n\nThe settings are echoed back as they were applied, which is not always\nwhat you sent: values you omitted are filled in, and values capped by\nyour organization's policy are reported at the capped figure."
+      },
+      "ScheduledPrices": {
+        "description": "Prices that take effect at `effective_from`.",
+        "properties": {
+          "effective_from": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "ends_at": {
+            "description": "When these prices stop, as `ModelPricing::ends_at` states it for the\ncurrent price. Absent when no end follows them.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prices": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "propertyNames": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "tiers": {
+            "items": {
+              "$ref": "#/components/schemas/PriceTier"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "effective_from",
+          "prices",
+          "tiers"
+        ],
+        "type": "object"
       },
       "ServiceTier": {
         "description": "The service tier a request asks for.",

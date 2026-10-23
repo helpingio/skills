@@ -352,84 +352,238 @@ GET /v1/models
   "data": [
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-fable-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-fable-5-1",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-opus-4-8",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-opus-5-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-sonnet-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-sonnet-5-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.1-flash-lite",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.5-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.5-flash-lite",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.6-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.7-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-3.8-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "google/gemini-4-argon",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "openai/gpt-5.4-mini",
       "object": "model",
       "owned_by": "openai"

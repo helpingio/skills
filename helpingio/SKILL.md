@@ -71,6 +71,7 @@ prefix. The public extension fields:
 
 - `helpingio:error`
 - `helpingio:memory`
+- `helpingio:pricing`
 - `helpingio:schema_source`
 - `helpingio:tool_calls_dropped`
 - `helpingio:unreadable`
