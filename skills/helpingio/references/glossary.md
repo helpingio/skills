@@ -32,6 +32,22 @@ names that appear in the documentation and on the wire.
 - **scheduled**: In helpingio:pricing, prices already scheduled to replace the current ones, earliest first.
 - **prices**: In a price tier or a scheduled change, the price per meter in credits per million tokens.
 - **ends_at**: In helpingio:pricing, when this price stops; after it, requests for the model are refused until a new price is published.
+- **provider_name**: On a model of GET /catalog/models, its provider's display name.
+- **listed**: On a model of GET /catalog/models, whether it is one of its family's listed models: the current one and the three before it. Unlisted models are still served by id.
+- **context_window**: On a model of GET /catalog/models, its context window in tokens; null when there is no figure for it.
+- **max_output_tokens**: On a model of GET /catalog/models, the most output tokens one response may hold; null when there is no figure for it.
+- **available_until**: On a model of GET /catalog/models, when it stops being served. Absent when no end is scheduled.
+- **pricing**: On a model of GET /catalog/models, its list price in credits per million tokens, as entries; null when the price cannot be stated exactly.
+- **entries**: In the list price of GET /catalog/models, every price in force now or scheduled. Among the entries in force at a moment, the one whose conditions all match and that has the most conditions applies.
+- **conditions**: In a price entry, what a request must match for its prices. Empty for the base price.
+- **effective_until**: In a price entry, when its prices stop. Absent when no change or end is scheduled.
+- **prompt_tokens_above**: A price entry condition: the entry prices a whole request whose prompt is longer than this many tokens.
+- **service_tier**: A price entry condition: the entry prices a request the provider served at this service tier.
+- **input**: Price key: input tokens read neither from nor into the provider's prompt cache.
+- **cache_read**: Price key: input tokens read from the provider's prompt cache.
+- **cache_write**: Price key: input tokens written to a short-lived prompt cache entry.
+- **cache_write_1h**: Price key: input tokens written to a one-hour prompt cache entry.
+- **output**: Price key: output tokens, reasoning included.
 - **effective_from**: In a scheduled change, the instant its prices take effect.
 - **input_tokens**: Priced meter: input tokens read neither from nor into the provider's prompt cache.
 - **cache_read_tokens**: Priced meter: input tokens read from the provider's prompt cache.
