@@ -397,6 +397,23 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "id": "anthropic/claude-haiku-4-5-20251001",
+      "object": "model",
+      "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-opus-4-8",
       "object": "model",
       "owned_by": "anthropic"
@@ -448,6 +465,40 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "id": "anthropic/claude-sonnet-4-5-20250929",
+      "object": "model",
+      "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "anthropic/claude-sonnet-4-6",
+      "object": "model",
+      "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "anthropic/claude-sonnet-5",
       "object": "model",
       "owned_by": "anthropic"
@@ -468,6 +519,23 @@ GET /v1/models
       "id": "anthropic/claude-sonnet-5-5",
       "object": "model",
       "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "google/gemini-2.5-flash-lite",
+      "object": "model",
+      "owned_by": "google"
     },
     {
       "created": 1767225600,
@@ -601,7 +669,126 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "id": "openai/gpt-4.1-mini",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-4o-mini",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-5.1",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-5.2",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-5.2-pro",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-5.3-codex",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
       "id": "openai/gpt-5.4-mini",
+      "object": "model",
+      "owned_by": "openai"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "id": "openai/gpt-5.4-nano",
       "object": "model",
       "owned_by": "openai"
     }
