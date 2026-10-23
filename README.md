@@ -5,6 +5,10 @@ authenticating, the routes, streaming, the tool loop, and which errors are worth
 retrying, with every error code, stream event, limit and captured example behind
 it.
 
+The skill calls the helping.io API (https://api.helping.io/v1, or the address you set in
+HELPINGIO_BASE_URL) with the key in HELPINGIO_API_KEY, and reads docs from
+docs.helping.io. It collects nothing and sends nothing anywhere else.
+
 ## Claude Code
 
 ```text
@@ -18,10 +22,11 @@ another command already uses that name.
 
 ## Other agents
 
-`helpingio/SKILL.md` is an Agent Skills file: copy the `helpingio/`
-directory into the skills directory your agent reads.
+`skills/helpingio/SKILL.md` is an Agent Skills file: copy the `skills/helpingio/`
+directory into the skills directory your agent reads. This repository is also
+a Cursor plugin and a Gemini CLI extension, with the same skill in each.
 
-For an assistant that reads a file at the root of your repository instead,
+For an agent that reads a file at the root of your repository instead,
 `AGENTS.md` is the same guidance in short form: copy it into your repository.
 For Cursor, copy `cursor/helpingio.mdc` into `.cursor/rules/`.
 
