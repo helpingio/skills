@@ -424,6 +424,12 @@ GET /v1/models
     },
     {
       "created": 1767225600,
+      "id": "google/gemini-4-argon",
+      "object": "model",
+      "owned_by": "google"
+    },
+    {
+      "created": 1767225600,
       "id": "openai/gpt-5.4-mini",
       "object": "model",
       "owned_by": "openai"
