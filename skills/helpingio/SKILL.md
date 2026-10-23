@@ -1,6 +1,6 @@
 ---
-name: helpingio
-description: Call the helping.io API (Open Responses compatible, at https://api.helping.io/v1): create responses, stream, handle tools and errors
+name: "helpingio"
+description: "Call the helping.io API (Open Responses compatible, at https://api.helping.io/v1): create responses, stream, handle tools and errors"
 ---
 
 # helping.io API

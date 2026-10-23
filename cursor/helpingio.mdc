@@ -1,5 +1,5 @@
 ---
-description: Calling the helping.io API (Open Responses compatible, at https://api.helping.io/v1)
+description: "Calling the helping.io API (Open Responses compatible, at https://api.helping.io/v1)"
 alwaysApply: false
 ---
 
