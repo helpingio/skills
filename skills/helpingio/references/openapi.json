@@ -493,7 +493,7 @@
             "description": "The input for this turn."
           },
           "instructions": {
-            "description": "Steering text for this turn only.\n\nApplies to this request and is not inherited by later turns.",
+            "description": "Steering text for this turn only.\n\nWith the default agent, sent as the system prompt in place of the\ndefault agent's own. Applies to this request and is not inherited by\nlater turns.",
             "type": [
               "string",
               "null"
