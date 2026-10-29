@@ -2,7 +2,7 @@
   "name": "helpingio",
   "displayName": "helping.io",
   "description": "Call the helping.io API (Open Responses compatible, at https://api.helping.io/v1): create responses, stream, handle tools and errors",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "author": {
     "name": "helping.io",
     "url": "https://docs.helping.io"
