@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "helpingio",
-  "version": "0.1.37",
+  "version": "0.1.38",
   "description": "Call the helping.io API (Open Responses compatible, at https://api.helping.io/v1): create responses, stream, handle tools and errors",
   "author": {
     "name": "helping.io",
