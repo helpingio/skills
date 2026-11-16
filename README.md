@@ -28,7 +28,8 @@ a Cursor plugin and a Gemini CLI extension, with the same skill in each.
 
 For an agent that reads a file at the root of your repository instead,
 `AGENTS.md` is the same guidance in short form: copy it into your repository.
-For Cursor, copy `cursor/helpingio.mdc` into `.cursor/rules/`.
+For Cursor, https://docs.helping.io/cursor/helpingio.mdc is the same text as a Cursor rule,
+which belongs in `.cursor/rules/`.
 
 ## Documentation
 
