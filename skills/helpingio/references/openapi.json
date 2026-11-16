@@ -93,6 +93,178 @@
         ],
         "description": "A message from the assistant."
       },
+      "CompactResource": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "created_at": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "id": {
+                "type": "string"
+              },
+              "object": {
+                "description": "Always `response.compaction`.",
+                "type": "string"
+              },
+              "output": {
+                "items": {
+                  "$ref": "#/components/schemas/ItemField"
+                },
+                "type": "array"
+              },
+              "usage": {
+                "$ref": "#/components/schemas/Usage"
+              }
+            },
+            "required": [
+              "id",
+              "object",
+              "output",
+              "created_at",
+              "usage"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A compacted conversation.\n\n`output` holds the one `compaction` item; the most recent turns stay on the\nserver and are still sent to the model in full, so the next request needs no\nchange. `usage` is what writing the summary used."
+      },
+      "CompactResponseMethodPublicBody": {
+        "additionalProperties": false,
+        "description": "Compact a conversation.\n\nNames a stored response and the model that writes the summary. The\nconversation the response belongs to is compacted on the server, and later\nresponses on it read the summary in place of its older turns.",
+        "properties": {
+          "input": {
+            "description": "Not accepted: only a stored conversation, named by\n`previous_response_id`, can be compacted.",
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "instructions": {
+            "description": "Accepted and not applied; `helpingio:warnings` says so.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model": {
+            "description": "The model that writes the summary: from the same provider as the\nconversation, and one of the models allowed to compact.",
+            "type": "string"
+          },
+          "previous_response_id": {
+            "description": "The response whose conversation is compacted. Required.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prompt_cache_key": {
+            "description": "Accepted and not applied.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "model"
+        ],
+        "type": "object"
+      },
+      "CompactionField": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "encrypted_content": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "encrypted_content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "Where the conversation's older turns were replaced by a summary.\n\nThe first response that reads a new summary carries this item ahead of its\nreply. It marks where the summary took effect, not where it ends: the most\nrecent turns are still sent to the model in full. `encrypted_content` is\nopaque and holds no text."
+      },
+      "CompactionItemParam": {
+        "allOf": [
+          {
+            "type": "object"
+          },
+          {
+            "properties": {
+              "encrypted_content": {
+                "type": "string"
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "encrypted_content"
+            ],
+            "type": "object"
+          }
+        ],
+        "description": "A compaction item from an earlier response, sent back.\n\n`encrypted_content` is opaque: pass it back unchanged. It names the summary\nand its conversation, so sending it back on that conversation changes\nnothing, and sending it anywhere else is refused."
+      },
+      "CompactionMode": {
+        "description": "Whether the server compacts this conversation automatically.",
+        "enum": [
+          "auto",
+          "off"
+        ],
+        "type": "string"
+      },
+      "CompactionSummaryResource": {
+        "description": "A conversation's summary, as the model now reads it in place of the turns\nit covers.",
+        "properties": {
+          "created_at": {
+            "description": "When the summary was written.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "description": "The `cmp_` id the `compaction` item and the receipt name.",
+            "type": "string"
+          },
+          "model": {
+            "description": "The model that wrote it.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `compaction`.",
+            "type": "string"
+          },
+          "summary": {
+            "description": "The summary's text.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "model",
+          "summary"
+        ],
+        "type": "object"
+      },
       "ContentPart": {
         "description": "One piece of message content, discriminated by `type`.\n\nThe same set covers both directions: input text and attachments on the\nway in, output text, refusals, and reasoning on the way out. A part you\nsend needs only the fields its own `type` defines.",
         "oneOf": [
@@ -307,6 +479,35 @@
           }
         ]
       },
+      "ContextManagementParam": {
+        "additionalProperties": false,
+        "description": "Automatic compaction for this response. It applies to the request that sends\nit: a later request that leaves it out has it off.",
+        "properties": {
+          "compact_threshold": {
+            "description": "Input tokens at which compaction is considered.",
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "compaction": {
+            "$ref": "#/components/schemas/CompactionMode",
+            "description": "`auto` compacts the conversation after a response that reaches the\nthreshold. `off` does not. Required: an empty object asks for nothing."
+          },
+          "model": {
+            "description": "The model that writes the summary, from the conversation's provider.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "compaction"
+        ],
+        "type": "object"
+      },
       "ConversationItemList": {
         "description": "A page of a conversation's items.\n\n`first_id` and `last_id` are always present, as empty strings on an empty\npage. A client paginating with `after` uses `last_id`, and `has_more` is what\ntells it whether to ask again.",
         "properties": {
@@ -467,10 +668,28 @@
               "null"
             ]
           },
+          "helpingio:context_management": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContextManagementParam"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Keep a long conversation inside the model's context window: summarize\nits older turns once it reaches a threshold, and clear old tool results\nwhen a response would otherwise overflow.\n\nApplies to the request that sends it. A summary is billed as its own\nline in usage."
+          },
           "helpingio:memory": {
             "description": "Turn memory on for the conversation this response starts.\n\nSet on a conversation's first response. With `true`, the model keeps\nfacts about the person and reads them back on later turns. Later turns\nkeep what the first one chose: the same value again changes nothing,\nand a different one is refused.",
             "type": [
               "boolean",
+              "null"
+            ]
+          },
+          "helpingio:memory_id": {
+            "description": "Share memory with other conversations under this API key.\n\nA string you choose that names who or what the memory follows: one of\nyour users, a team, anything stable. Send it on a conversation's first\nresponse; sending it turns this memory on. A later turn may repeat it\nor leave it out. A different value is refused, and a conversation\nstarted without one cannot gain one.",
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -731,6 +950,24 @@
         ],
         "type": "object"
       },
+      "ForgetMemoryBody": {
+        "additionalProperties": false,
+        "description": "Forget a memory id, or one fact it holds.",
+        "properties": {
+          "fact_id": {
+            "description": "One fact of that memory, as a `fact_...` id. Absent, the whole memory\nis forgotten. It cannot be null: a caller whose fact variable is unset\nmeant one fact, and must not lose the whole memory.",
+            "type": "string"
+          },
+          "memory_id": {
+            "description": "The memory id. It travels in the body and never in the path, because\nit can be an email.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "memory_id"
+        ],
+        "type": "object"
+      },
       "FunctionCallField": {
         "allOf": [
           {
@@ -912,6 +1149,14 @@
             "format": "int64",
             "type": "integer"
           },
+          "helpingio:context_window": {
+            "description": "The most tokens a request to this model may hold, input and reply\ntogether. Omitted when the model states no window.",
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
           "helpingio:pricing": {
             "anyOf": [
               {
@@ -922,6 +1167,13 @@
               }
             ],
             "description": "What the model costs you now and what it is scheduled to cost, in\ncredits per million tokens. Omitted when the model has no price this\nfield can state exactly."
+          },
+          "helpingio:supported_parameters": {
+            "description": "Which of the optional sampling and output settings this model accepts,\nby their request names (`temperature`, `text.format`). One of those\nsettings not listed is refused for this model. Output limits, `tools`\nand `tool_choice` are governed by the model's capabilities, not by this\nlist.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           },
           "id": {
             "type": "string"
@@ -939,7 +1191,8 @@
           "id",
           "object",
           "created",
-          "owned_by"
+          "owned_by",
+          "helpingio:supported_parameters"
         ],
         "type": "object"
       },
@@ -1119,6 +1372,27 @@
                 "type": "object"
               }
             ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompactionField"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "compaction"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
           }
         ]
       },
@@ -1196,6 +1470,177 @@
         "required": [
           "token",
           "logprob"
+        ],
+        "type": "object"
+      },
+      "MemoryFact": {
+        "description": "One remembered fact.",
+        "properties": {
+          "content": {
+            "description": "The value recorded.",
+            "type": "object"
+          },
+          "conversation_id": {
+            "description": "The conversation the fact was recorded in.",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "When the fact was recorded, in Unix seconds.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "description": "The fact's id. Pass it to forget this fact alone.",
+            "type": "string"
+          },
+          "kind": {
+            "description": "What sort of fact this is.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `memory.fact`.",
+            "type": "string"
+          },
+          "slot": {
+            "description": "Which property of the subject the fact records.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject": {
+            "description": "Who or what the fact is about.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "description": "A short description of the fact, when one was recorded.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "kind",
+          "content",
+          "conversation_id",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "MemoryFactList": {
+        "description": "A page of the facts a memory id holds, newest first.\n\n`first_id` and `last_id` are empty strings on an empty page. `has_more`\ntells you whether to ask again.",
+        "properties": {
+          "data": {
+            "description": "The facts, newest first.",
+            "items": {
+              "$ref": "#/components/schemas/MemoryFact"
+            },
+            "type": "array"
+          },
+          "first_id": {
+            "description": "The id of the first fact on this page.",
+            "type": "string"
+          },
+          "has_more": {
+            "description": "Whether more facts exist after this page.",
+            "type": "boolean"
+          },
+          "helpingio:memory_id": {
+            "description": "The memory id you asked for.",
+            "type": "string"
+          },
+          "last_id": {
+            "description": "The id of the last fact on this page; pass it as `after` for the next\npage.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `list`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "data",
+          "has_more",
+          "first_id",
+          "last_id",
+          "helpingio:memory_id"
+        ],
+        "type": "object"
+      },
+      "MemoryForgottenResource": {
+        "description": "The answer to a forget. The id is not echoed.",
+        "properties": {
+          "forgotten": {
+            "description": "Always `true`.",
+            "type": "boolean"
+          },
+          "object": {
+            "description": "Always `memory.forgotten`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object",
+          "forgotten"
+        ],
+        "type": "object"
+      },
+      "MemoryListBody": {
+        "additionalProperties": false,
+        "description": "List what a memory id holds.",
+        "properties": {
+          "after": {
+            "description": "Return the facts after this one. Pass the `last_id` of the previous\npage.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "description": "How many facts to return, from 1 to 500. Defaults to 20.",
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "memory_id": {
+            "description": "The memory id, as sent in `helpingio:memory_id`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "memory_id"
+        ],
+        "type": "object"
+      },
+      "MemoryRenamedResource": {
+        "description": "The answer to a rename. It echoes the new id, and never the old one.",
+        "properties": {
+          "helpingio:memory_id": {
+            "description": "The id the memory now answers to.",
+            "type": "string"
+          },
+          "object": {
+            "description": "Always `memory.renamed`.",
+            "type": "string"
+          },
+          "renamed": {
+            "description": "Always `true`.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "object",
+          "renamed",
+          "helpingio:memory_id"
         ],
         "type": "object"
       },
@@ -1567,6 +2012,25 @@
         ],
         "type": "string"
       },
+      "RenameMemoryBody": {
+        "additionalProperties": false,
+        "description": "Rename a memory id.",
+        "properties": {
+          "memory_id": {
+            "description": "The memory id, as sent in `helpingio:memory_id`. It travels in the\nbody and never in the path, because it can be an email.",
+            "type": "string"
+          },
+          "new_memory_id": {
+            "description": "The id the memory moves to. It must hold no memory.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "memory_id",
+          "new_memory_id"
+        ],
+        "type": "object"
+      },
       "ResponseConversation": {
         "description": "The conversation a response belongs to.\n\nIts items are the context the response ran on, and the response's own\ninput and output are added to it.",
         "properties": {
@@ -1839,8 +2303,15 @@
                 "$ref": "#/components/schemas/Truncation"
               },
               "usage": {
-                "$ref": "#/components/schemas/Usage",
-                "description": "What this response consumed.\n\nABSENT while the response is still running, and present once it\nsettles. A response that is `queued` or `in_progress` has spent\nnothing you can be billed for yet, so there is no figure to report,\nand the field is left out rather than sent as `null`."
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Usage"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "What this response consumed.\n\n`null` while the response is still running, and present once it\nsettles. A response that is `queued` or `in_progress` has spent nothing\nyou can be billed for yet, so there is no figure to report."
               }
             },
             "required": [
@@ -1866,6 +2337,7 @@
               "top_logprobs",
               "temperature",
               "reasoning",
+              "usage",
               "max_output_tokens",
               "max_tool_calls",
               "store",
@@ -2505,7 +2977,7 @@
               },
               "type": {
                 "enum": [
-                  "response.reasoning_text.delta"
+                  "response.reasoning.delta"
                 ],
                 "type": "string"
               }
@@ -2542,7 +3014,7 @@
               },
               "type": {
                 "enum": [
-                  "response.reasoning_text.done"
+                  "response.reasoning.done"
                 ],
                 "type": "string"
               }
@@ -2781,24 +3253,10 @@
             "type": "object"
           },
           {
-            "description": "The stream failed and this is the last event you receive.\n\n`code`, `message` and `param` are on the event itself, not nested:\nread `message` for what went wrong and `code` to branch on it. The\ncodes are the same ones a non-streaming error carries.",
+            "description": "The stream failed and this is the last event you receive.\n\nThe failure is in `error`, with the same `code`, `message` and `param`\na non-streaming error carries.",
             "properties": {
-              "code": {
-                "description": "Nullable in the schema; this surface always sets it.",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "message": {
-                "type": "string"
-              },
-              "param": {
-                "description": "Nullable in the schema; this surface has no parameter to name.",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "error": {
+                "$ref": "#/components/schemas/ErrorPayload"
               },
               "sequence_number": {
                 "format": "int64",
@@ -2813,7 +3271,7 @@
             },
             "required": [
               "sequence_number",
-              "message",
+              "error",
               "type"
             ],
             "type": "object"
@@ -2953,6 +3411,27 @@
                   "type": {
                     "enum": [
                       "reasoning"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompactionItemParam"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "compaction"
                     ],
                     "type": "string"
                   }
@@ -3243,6 +3722,54 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/v1/compactions/{compaction_id}": {
+      "get": {
+        "description": "The summary a `cmp_` id names, as the model reads it in place of the turns\nit covers.",
+        "operationId": "v1_get_compaction",
+        "parameters": [
+          {
+            "description": "The `cmp_...` id of a `compaction` item, as `helpingio:context_omissions` names it too",
+            "in": "path",
+            "name": "compaction_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompactionSummaryResource"
+                }
+              }
+            },
+            "description": "The summary, the model that wrote it and when."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such summary, one removed with its conversation or a source, or one this key cannot reach."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Read a summary",
+        "tags": [
+          "Compactions"
+        ]
+      }
+    },
     "/v1/conversations": {
       "post": {
         "description": "Both fields are optional: an empty body gives you an empty conversation.\n`items` seeds it with up to 20 items, which the next response on this\nconversation will see as context.",
@@ -3788,9 +4315,182 @@
         ]
       }
     },
+    "/v1/memory/forget": {
+      "post": {
+        "description": "Deletes every conversation held under the id for this API key. What was\nremembered stops being used at once, and the id starts fresh. Forgetting\nan id that holds nothing succeeds. With `fact_id`, forgets that one fact\ninstead, and an earlier value it replaced is remembered again.",
+        "operationId": "v1_forget_memory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "memory_id": "user-8f2a"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ForgetMemoryBody"
+              }
+            }
+          },
+          "description": "The memory id to forget.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryForgottenResource"
+                }
+              }
+            },
+            "description": "`{object: \"memory.forgotten\", forgotten: true}`."
+          },
+          "400": {
+            "description": "The body is malformed, or `memory_id` is empty or too long (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "`fact_id` names no fact held under this memory id (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its delete allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Forget a memory id",
+        "tags": [
+          "Memory"
+        ]
+      }
+    },
+    "/v1/memory/list": {
+      "post": {
+        "description": "Returns the facts remembered under the id for this API key, newest first.\nPage with `after`, passing the `last_id` of the previous page; reading\nevery page exports the memory. An id that holds nothing returns an empty\nlist.",
+        "operationId": "v1_list_memory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "limit": 20,
+                "memory_id": "user-8f2a"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/MemoryListBody"
+              }
+            }
+          },
+          "description": "The memory id, and which page of it.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryFactList"
+                }
+              }
+            },
+            "description": "A page of facts, echoing `helpingio:memory_id`."
+          },
+          "400": {
+            "description": "The body is malformed, `memory_id` is empty or too long, `after` is not a fact id from this memory, or `limit` is outside 1..=500 (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its retrieval allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "List what a memory id holds",
+        "tags": [
+          "Memory"
+        ]
+      }
+    },
+    "/v1/memory/rename": {
+      "post": {
+        "description": "Moves everything held under the id to a new one for this API key, and the\nnew id replaces the old on stored responses. Later requests that send the\nold id on those conversations are refused. The new id must hold no memory.",
+        "operationId": "v1_rename_memory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "memory_id": "user-8f2a",
+                "new_memory_id": "user-91c4"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/RenameMemoryBody"
+              }
+            }
+          },
+          "description": "The memory id to rename, and the id it moves to.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryRenamedResource"
+                }
+              }
+            },
+            "description": "`{object: \"memory.renamed\", renamed: true, \"helpingio:memory_id\": \"...\"}`, with the new id."
+          },
+          "400": {
+            "description": "The body is malformed, an id is empty or too long, or the two ids are the same (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "`memory_id` holds no memory (the error envelope)"
+          },
+          "409": {
+            "description": "`new_memory_id` already holds memory, which a forget does not clear until its retention ends (the error envelope)"
+          },
+          "429": {
+            "description": "This organization has exhausted its delete allowance; retry after the Retry-After header."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Rename a memory id",
+        "tags": [
+          "Memory"
+        ]
+      }
+    },
     "/v1/models": {
       "get": {
-        "description": "Ids are canonical `provider/model` and are what `model` accepts on a\nrequest. The list is the whole catalog: your organization's model policy\ncan still refuse a listed model, with `model_policy_violation`.",
+        "description": "Ids are canonical `provider/model` and are what `model` accepts on a\nrequest. The list holds the models your key may select: a model your\norganization's model policy denies, or leaves off an allowed list, for\nthis key, its owner or the organization, is not listed. A policy that\nlocks requests to the configured model can still refuse a listed model,\nwith `model_policy_violation`.",
         "operationId": "v1_list_models",
         "responses": {
           "200": {
@@ -3817,6 +4517,114 @@
           }
         },
         "summary": "List the models in the catalog.",
+        "tags": [
+          "Models"
+        ]
+      }
+    },
+    "/v1/models/{model}": {
+      "get": {
+        "description": "`model` is a model id as the list gives it, with its `/` percent-encoded\n(`provider%2Fmodel`), or a bare model name that exactly one\nprovider serves. The model object is the one the list returns for it, and\na model the list does not show is not found.",
+        "operationId": "v1_retrieve_model",
+        "parameters": [
+          {
+            "description": "The model id with its `/` percent-encoded, or a bare model name one provider serves.",
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayModel"
+                }
+              }
+            },
+            "description": "The model."
+          },
+          "400": {
+            "description": "The bare name is served by more than one provider (the error envelope)"
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No model the list shows has this id (the error envelope)"
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Retrieve a model.",
+        "tags": [
+          "Models"
+        ]
+      }
+    },
+    "/v1/models/{provider}/{model}": {
+      "get": {
+        "description": "The same model object as `GET /v1/models/{model}`, for a client that\nsends the id `provider/model` as two path segments.",
+        "operationId": "v1_retrieve_model_by_parts",
+        "parameters": [
+          {
+            "description": "The provider part of the model id.",
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The model part of the model id.",
+            "in": "path",
+            "name": "model",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayModel"
+                }
+              }
+            },
+            "description": "The model."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No model the list shows has this id (the error envelope)"
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Retrieve a model, by its id with the `/` unencoded.",
         "tags": [
           "Models"
         ]
@@ -3871,7 +4679,7 @@
             "description": "The key is not entitled to what the request asked for (the error envelope)"
           },
           "404": {
-            "description": "No such `previous_response_id`, or one this key cannot reach."
+            "description": "No such `previous_response_id`, or one this key cannot reach; or the model was retired on its date (`model_not_found`), with the model that replaces it in `helpingio:replacement` (the error envelope)."
           },
           "409": {
             "description": "The Idempotency-Key was already used and its result cannot be returned for this request, or its first request is still being processed (the error envelope)"
@@ -3893,6 +4701,73 @@
           }
         },
         "summary": "Create a response.",
+        "tags": [
+          "Responses"
+        ]
+      }
+    },
+    "/v1/responses/compact": {
+      "post": {
+        "description": "Writes a summary of the conversation's older turns, which later responses\non it read in place of those turns. The most recent turns are kept in full.\nThe response that is named must be one this key created.",
+        "operationId": "v1_compact_response",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "model": "anthropic/claude-haiku-5-5",
+                "previous_response_id": "resp_ZXhhbXBsZS9jb21wYWN0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CompactResponseMethodPublicBody"
+              }
+            }
+          },
+          "description": "The response whose conversation to compact, and the model that writes the summary.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompactResource"
+                }
+              }
+            },
+            "description": "The compacted conversation: the `compaction` item, and what writing the summary used."
+          },
+          "400": {
+            "description": "The body is malformed, `previous_response_id` is missing, `input` was sent, the conversation cannot be compacted or is too short to compact, or `model` is from another provider (the error envelope)."
+          },
+          "401": {
+            "description": "Missing or invalid API key (the error envelope)"
+          },
+          "402": {
+            "description": "The organization has no payment method on file (the error envelope)."
+          },
+          "403": {
+            "description": "The key is not entitled to what the request asked for (the error envelope)"
+          },
+          "404": {
+            "description": "No such response, or one this key cannot reach."
+          },
+          "409": {
+            "description": "The named response is still in progress; a compaction of this conversation is in progress, and one that outlasted the wait keeps running and is charged; or part of the conversation was removed while it was being compacted, and `helpingio:usage` states the charge (the error envelope)."
+          },
+          "429": {
+            "description": "The organization's credits or a spending limit refused the summary, before it started or part way, when `helpingio:usage` states what the calls before it were charged; or the model provider rate limited it (the error envelope)."
+          },
+          "500": {
+            "description": "The request could not be completed; quote the x-request-id response header when reporting it."
+          },
+          "502": {
+            "description": "The model provider failed or was overloaded, or did not return a usable summary; `helpingio:usage` states any charge (the error envelope)."
+          },
+          "503": {
+            "description": "The request could not be served this instant; retry after the Retry-After header."
+          }
+        },
+        "summary": "Compact a conversation",
         "tags": [
           "Responses"
         ]
@@ -4069,7 +4944,7 @@
   ],
   "tags": [
     {
-      "description": "Create a response, streamed or returned whole, and retrieve, cancel or delete a stored response by its id.",
+      "description": "Create a response, streamed or returned whole, retrieve, cancel or delete a stored response by its id, and compact the conversation behind one.",
       "name": "Responses"
     },
     {
@@ -4079,6 +4954,14 @@
     {
       "description": "List the model ids a request's `model` field accepts.",
       "name": "Models"
+    },
+    {
+      "description": "List, forget or rename what is held under a memory id.",
+      "name": "Memory"
+    },
+    {
+      "description": "Read a conversation's summary by the id its compaction item carries.",
+      "name": "Compactions"
     }
   ]
 }

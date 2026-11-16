@@ -31,6 +31,7 @@ Point the SDK's base URL at the `/v1` prefix, not at the host on its own.
 
 ## Routes
 
+- `GET /v1/compactions/{compaction_id}`
 - `POST /v1/conversations`
 - `DELETE /v1/conversations/{conversation_id}`
 - `GET /v1/conversations/{conversation_id}`
@@ -39,8 +40,14 @@ Point the SDK's base URL at the `/v1` prefix, not at the host on its own.
 - `POST /v1/conversations/{conversation_id}/items`
 - `DELETE /v1/conversations/{conversation_id}/items/{item_id}`
 - `GET /v1/conversations/{conversation_id}/items/{item_id}`
+- `POST /v1/memory/forget`
+- `POST /v1/memory/list`
+- `POST /v1/memory/rename`
 - `GET /v1/models`
+- `GET /v1/models/{model}`
+- `GET /v1/models/{provider}/{model}`
 - `POST /v1/responses`
+- `POST /v1/responses/compact`
 - `DELETE /v1/responses/{response_id}`
 - `GET /v1/responses/{response_id}`
 - `POST /v1/responses/{response_id}/cancel`
@@ -69,10 +76,17 @@ policy may still refuse one, so a listed model is not a guarantee.
 Fields beyond the Open Responses specification carry the `helpingio:`
 prefix. The public extension fields:
 
+- `helpingio:context`
+- `helpingio:context_management`
+- `helpingio:context_omissions`
+- `helpingio:context_window`
 - `helpingio:error`
 - `helpingio:memory`
+- `helpingio:memory_id`
 - `helpingio:pricing`
+- `helpingio:replacement`
 - `helpingio:schema_source`
+- `helpingio:supported_parameters`
 - `helpingio:tool_calls_dropped`
 - `helpingio:unreadable`
 - `helpingio:usage`
@@ -139,7 +153,6 @@ See `references/errors.md` for every code and what each one means.
 - `references/openapi.json` for the exact request and response shape of a
   route, or to generate a client. It is the whole `/v1` contract as OpenAPI
   3.1, the same document the reference pages are rendered from.
-- `scripts/smoke.sh` to check a key and reach the API once.
 
 The full documentation is at https://docs.helping.io. The whole site as one file is
 https://docs.helping.io/llms-full.txt, and https://docs.helping.io/llms-small.txt is the abridged

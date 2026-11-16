@@ -9,17 +9,25 @@ not a delay.
 
 | Status | `code` | `type` | `Retry-After` | Meaning |
 | --- | --- | --- | --- | --- |
+| `400` | `compaction_model_not_allowed` | `invalid_request_error` | No | The model named to write a summary is not one of the affordable models compaction allows, so that no single call produces a surprise charge. |
 | `400` | `context_length_exceeded` | `invalid_request_error` | No | The conversation plus this turn's input is larger than the model's context window; start a new conversation, send less, or set truncation to auto to let the oldest turns be dropped. |
 | `400` | `invalid_input` | `invalid_request_error` | No | The request cannot be honored as written; the message names the field and the rule it broke. |
+| `400` | `media_storage_limit_reached` | `invalid_request_error` | No | Storing this request's images and files would take your organization past its 20 GiB limit for stored images and files, so nothing was stored; bytes already stored and sent again count once. Deleting the conversations that hold them frees the space 30 days after the delete. |
 | `400` | `model_policy_violation` | `invalid_request_error` | No | Your organization's policy does not allow the model this request selected; the message names the model and the rule that refused it, and param is `model`. |
 | `401` | `invalid_api_key` | `invalid_request_error` | No | The Authorization header is missing, malformed, or names a key that is not usable; check the key. |
 | `402` | `payment_method_required` | `invalid_request_error` | No | The organization has no payment method on file, so no request can be served; add one in the billing settings. |
 | `403` | `access_denied` | `permission_error` | No | The key is valid but is not entitled to what the request asked for; ask your administrator. |
+| `404` | `model_not_found` | `not_found_error` | No | The model this request would run on was retired on its date and is no longer served; the message names the date and the model that replaces it, which helpingio:replacement carries when one is recorded. |
 | `404` | `resource_not_found` | `not_found_error` | No | The path or the previous response named by this request is not available to you. |
+| `409` | `compaction_in_progress` | `invalid_request_error` | No | A compaction of this conversation is in progress: another was already running, or this one outlasted the request's wait. One that outlasted the wait keeps running and is charged for the calls it makes. If it stores a summary, the same request sent again returns that summary at no charge while no turn has been added since; if it fails, the conversation's next response reports it in helpingio:warnings. |
+| `409` | `conversation_in_progress` | `invalid_request_error` | No | This conversation has a response in progress, or one waiting on your tool output. Nothing was created; send the request again when that response ends. |
 | `409` | `idempotency_conflict` | `invalid_request_error` | No | This Idempotency-Key was already used within the last 24 hours, and what it made cannot be returned for this request: the body differs, or this API key cannot read it. Nothing was created. |
 | `409` | `idempotency_in_progress` | `invalid_request_error` | No | The first request with this Idempotency-Key is still being processed. Nothing was created; send the request again shortly. |
+| `409` | `resource_conflict` | `invalid_request_error` | No | The request conflicts with what is stored: a memory id cannot be renamed onto one that already holds memory. Nothing changed. |
+| `429` | `budget_exceeded` | `rate_limit_error` | No | A compaction's spending limit was reached part way. The summary was not stored; helpingio:usage states what the calls before it were charged. |
 | `429` | `insufficient_credits` | `rate_limit_error` | No | The organization's credit balance is exhausted; add credits in the billing settings. |
 | `429` | `insufficient_quota` | `insufficient_quota` | No | The organization has no active plan, or no credit balance to pay for the request; the message says which. |
+| `429` | `org_daily_budget_exceeded` | `rate_limit_error` | No | The organization's daily spending limit stopped a compaction part way. The summary was not stored; helpingio:usage states what the calls before it were charged. |
 | `429` | `provider_rate_limited` | `rate_limit_error` | No | The model provider rate limited this request; retry, honoring Retry-After when one is present. |
 | `429` | `rate_limit_exceeded` | `rate_limit_error` | Yes | This request exceeded a rate limit that applies to you; retry after the Retry-After header. |
 | `429` | `scope_budget_exceeded` | `rate_limit_error` | No | A spend budget set for your organization, a member, or an API key is exhausted; the message states which. |
@@ -49,9 +57,11 @@ surface does not name separately arrives as `run_failed`.
 | --- | --- |
 | `budget_exceeded` | The spending limit for a single response was reached. The message states what was spent against the limit, in credits. |
 | `canceled` | The request was canceled before it finished. |
+| `context_length_exceeded` | The model provider refused the request because the conversation plus this turn's input is larger than the model's context window. |
 | `end_user_blocked` | The model provider refuses requests for the end user this request was sent for, named by its safety_identifier or user. Sending it again will not succeed for that end user. |
 | `insufficient_credits` | The organization ran out of credits while the request was running. Add credits and send it again. The message states the balance, in credits. |
 | `invalid_input` | An image or file in the conversation or the turn is not one the model accepts, by its type or its size. The request never reached the provider. |
+| `max_turns_exceeded` | The response reached its limit of model turns before it produced the output it declares. A response that declares no output stops at the same limit as incomplete, with incomplete_details.reason max_turns, instead. |
 | `model_unavailable` | The requested model could not run, and nothing was sent to a provider. Try again later or choose another model. |
 | `org_daily_budget_exceeded` | The organization's daily spending limit was reached. The message states what was spent against the limit, in credits. |
 | `output_schema_mismatch` | The model's reply did not match its JSON schema, so it was not returned. helpingio:schema_source names the schema: text.format for the request's own. |
@@ -62,6 +72,7 @@ surface does not name separately arrives as `run_failed`.
 | `provider_unavailable` | The upstream model provider failed to complete the request. Retry later. |
 | `run_failed` | The request did not complete. Send it again, and contact support with the response id if it keeps failing. |
 | `scope_budget_exceeded` | A spending limit set for this period was reached. The message states what was spent against the limit, in credits. |
+| `tool_output_timeout` | No output arrived for one of the response's tool calls within the time a response waits for one, so the response was stopped. Turns already made are billed. |
 
 ## Errors during a stream
 

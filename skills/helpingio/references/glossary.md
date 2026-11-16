@@ -24,6 +24,8 @@ names that appear in the documentation and on the wire.
 - **helpingio:unreadable**: List field naming the items on a page that are stored but could not be read. The other items are returned as usual.
 - **helpingio:schema_source**: Error field: on a response that failed output_schema_mismatch, the schema the reply was checked against: text.format for the request's own, declared for the output the workflow declares.
 - **helpingio:pricing**: Field on each model of GET /v1/models: what the model costs your organization now, by prompt length where that matters, and every price already scheduled to replace it, in credits per million tokens. Absent when the model has no price it can state exactly.
+- **helpingio:context_window**: Field on each model of GET /v1/models: the most tokens a request to the model may hold, input and reply together. Absent when the model states no window.
+- **helpingio:supported_parameters**: Field on each model of GET /v1/models: which of the optional sampling and output settings in the compatibility table the model accepts, by their request names. One of those settings not listed is refused for that model. Output limits, tools and tool_choice are governed by the model's capabilities, not by this list.
 - **unit**: In helpingio:pricing, the unit every price is stated in: always credits_per_million_tokens.
 - **credits_per_million_tokens**: The unit of a price in helpingio:pricing: credits per million tokens of the meter it prices.
 - **current**: In helpingio:pricing, the price per meter in force now, for a prompt of any length or, when tiers is not empty, up to the first tier's threshold.
@@ -32,13 +34,13 @@ names that appear in the documentation and on the wire.
 - **scheduled**: In helpingio:pricing, prices already scheduled to replace the current ones, earliest first.
 - **prices**: In a price tier or a scheduled change, the price per meter in credits per million tokens.
 - **ends_at**: In helpingio:pricing, when this price stops; after it, requests for the model are refused until a new price is published.
-- **provider_name**: On a model of GET /catalog/models, its provider's display name.
-- **listed**: On a model of GET /catalog/models, whether it is one of its family's listed models: the current one and the three before it. Unlisted models are still served by id.
-- **context_window**: On a model of GET /catalog/models, its context window in tokens; null when there is no figure for it.
-- **max_output_tokens**: On a model of GET /catalog/models, the most output tokens one response may hold; null when there is no figure for it.
-- **available_until**: On a model of GET /catalog/models, when it stops being served. Absent when no end is scheduled.
-- **pricing**: On a model of GET /catalog/models, its list price in credits per million tokens, as entries; null when the price cannot be stated exactly.
-- **entries**: In the list price of GET /catalog/models, every price in force now or scheduled. Among the entries in force at a moment, the one whose conditions all match and that has the most conditions applies.
+- **provider_name**: On a model of GET /models, its provider's display name.
+- **listed**: On a model of GET /models, whether it is one of its family's listed models: the current one and the three before it. Unlisted models are still served by id.
+- **context_window**: On a model of GET /models, its context window in tokens; null when there is no figure for it.
+- **max_output_tokens**: On a model of GET /models, the most output tokens one response may hold; null when there is no figure for it.
+- **available_until**: On a model of GET /models, when it stops being served. Absent when no end is scheduled.
+- **pricing**: On a model of GET /models, its list price in credits per million tokens, as entries; null when the price cannot be stated exactly.
+- **entries**: In the list price of GET /models, every price in force now or scheduled. Among the entries in force at a moment, the one whose conditions all match and that has the most conditions applies.
 - **conditions**: In a price entry, what a request must match for its prices. Empty for the base price.
 - **effective_until**: In a price entry, when its prices stop. Absent when no change or end is scheduled.
 - **prompt_tokens_above**: A price entry condition: the entry prices a whole request whose prompt is longer than this many tokens.
@@ -55,9 +57,14 @@ names that appear in the documentation and on the wire.
 - **cache_write_1h_tokens**: Priced meter: input tokens written to a one-hour prompt cache entry.
 - **output_tokens**: Priced meter: output tokens, reasoning included.
 - **helpingio:tool_calls_dropped**: Response field: on a response that runs under a max_tool_calls (sent with the request that started the turn), how many tool calls were cut, which were neither returned nor run. Absent when nothing was cut.
+- **helpingio:context_omissions**: Response field: what the model did not read of this response's input, a list keyed by reason. A tool_output_bounded line, one per tool result the model read only the first part of, carries a type, an id and an estimate of input_tokens. A compaction line, on the response that first loads a summary, carries the number of items the summary covers, an estimate of input_tokens and the compaction_id. Absent when nothing was left out.
 - **helpingio:usage**: Error field: on the 502 a non-streaming request answers when the model provider failed partway through its reply, the usage that reply was billed, in the shape of a response's usage. Absent when nothing was billed.
-- **helpingio:warnings**: Response field: a list of the request fields the response accepted and did not apply (type unsupported) or applied in place of another (type compatibility), each with its param and a message. Absent when there is nothing to report.
+- **helpingio:replacement**: Error field: on the 404 model_not_found a request for a retired model answers, the id of the model that replaces it. Absent when no replacement is named.
+- **helpingio:warnings**: Response field: a list of the request fields the response accepted and did not apply (type unsupported) or applied in place of another (type compatibility), and of the conversation's automatic compaction attempts that declined or failed since the last response reported one (type other, with param helpingio:context_management and a reason), each with its param and a message. Absent when there is nothing to report.
 - **item_unreadable**: Error code for an item that is stored but could not be read.
 - **end_user_blocked**: Error code for a response the model provider refused because it refuses requests for the end user named by the request's safety_identifier or user.
 - **output_schema_mismatch**: Error code for a response whose reply did not match the JSON schema the request set in text.format.
+- **tool_output_timeout**: Error code for a response that stopped because no output arrived for one of its tool calls within the hour a response waits for one.
+- **max_turns_exceeded**: Error code for a response that reached its limit of model turns before it produced the output it declares.
+- **max_turns**: The incomplete_details.reason of a response that stopped at its limit of model turns; its text and usage are kept.
 - **Default rate limit**: The request rate limit an organization has unless a different one is set for it. The rate-limit headers carry the live values.

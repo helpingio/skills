@@ -55,6 +55,10 @@ POST /v1/responses
   "created_at": 1767225600,
   "error": null,
   "frequency_penalty": 0.0,
+  "helpingio:context": {
+    "stored_tokens": 20,
+    "window_tokens": 8000
+  },
   "id": "resp_ZXhhbXBsZS9yZXNwL2ZpcnN0LXR1cm4AAAAAAAAAAAAAAAAAAAAAAA",
   "incomplete_details": null,
   "instructions": null,
@@ -139,6 +143,10 @@ POST /v1/responses
   "created_at": 1767225600,
   "error": null,
   "frequency_penalty": 0.0,
+  "helpingio:context": {
+    "stored_tokens": 35,
+    "window_tokens": 8000
+  },
   "id": "resp_ZXhhbXBsZS9yZXNwL2NvbnRpbnVhdGlvbgAAAAAAAAAAAAAAAAAAAA",
   "incomplete_details": null,
   "instructions": null,
@@ -238,7 +246,8 @@ POST /v1/responses
   "tools": [],
   "top_logprobs": 0,
   "top_p": 1.0,
-  "truncation": "disabled"
+  "truncation": "disabled",
+  "usage": null
 }
 ```
 
@@ -260,6 +269,10 @@ GET /v1/responses/{response_id}
   "created_at": 1767225600,
   "error": null,
   "frequency_penalty": 0.0,
+  "helpingio:context": {
+    "stored_tokens": 12,
+    "window_tokens": 8000
+  },
   "id": "resp_ZXhhbXBsZS9yZXNwL3JldHJpZXZlAAAAAAAAAAAAAAAAAAAAAAAAAA",
   "incomplete_details": null,
   "instructions": null,
@@ -352,6 +365,7 @@ GET /v1/models
   "data": [
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -363,12 +377,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-fable-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -380,12 +399,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-fable-5-1",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -397,12 +421,41 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
+      "id": "anthropic/claude-fable-5-2",
+      "object": "model",
+      "owned_by": "anthropic"
+    },
+    {
+      "created": 1767225600,
+      "helpingio:context_window": 200000,
+      "helpingio:pricing": {
+        "current": {
+          "cache_read_tokens": "3",
+          "cache_write_5m_tokens": "3",
+          "input_tokens": "3",
+          "output_tokens": "3"
+        },
+        "scheduled": [],
+        "tiers": [],
+        "unit": "credits_per_million_tokens"
+      },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-haiku-4-5-20251001",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -414,12 +467,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-opus-4-8",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -431,12 +489,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-opus-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -448,12 +511,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-opus-5-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 200000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -465,12 +533,19 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-sonnet-4-5-20250929",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -482,12 +557,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-sonnet-4-6",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -499,12 +579,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-sonnet-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1000000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -516,12 +601,17 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format"
+      ],
       "id": "anthropic/claude-sonnet-5-5",
       "object": "model",
       "owned_by": "anthropic"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -533,12 +623,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-2.5-flash-lite",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -550,12 +648,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.1-flash-lite",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -567,12 +673,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.5-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -584,12 +698,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.5-flash-lite",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -601,12 +723,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.6-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -618,12 +748,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.7-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -635,12 +773,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-3.8-flash",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1048576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -652,12 +798,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "presence_penalty",
+        "frequency_penalty",
+        "text.format"
+      ],
       "id": "google/gemini-4-argon",
       "object": "model",
       "owned_by": "google"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 1047576,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -669,12 +823,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-4.1-mini",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 128000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -686,12 +848,20 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "temperature",
+        "top_p",
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-4o-mini",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -703,12 +873,18 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.1",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -720,12 +896,18 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.2",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -737,12 +919,18 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.2-pro",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -754,12 +942,18 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.3-codex",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -771,12 +965,18 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.4-mini",
       "object": "model",
       "owned_by": "openai"
     },
     {
       "created": 1767225600,
+      "helpingio:context_window": 400000,
       "helpingio:pricing": {
         "current": {
           "cache_read_tokens": "3",
@@ -788,6 +988,11 @@ GET /v1/models
         "tiers": [],
         "unit": "credits_per_million_tokens"
       },
+      "helpingio:supported_parameters": [
+        "parallel_tool_calls",
+        "text.format",
+        "text.verbosity"
+      ],
       "id": "openai/gpt-5.4-nano",
       "object": "model",
       "owned_by": "openai"
@@ -847,6 +1052,10 @@ POST /v1/responses
   "created_at": 1767225600,
   "error": null,
   "frequency_penalty": 0.0,
+  "helpingio:context": {
+    "stored_tokens": 22,
+    "window_tokens": 8000
+  },
   "id": "resp_ZXhhbXBsZS9mYy90b29sLWNhbGwAAAAAAAAAAAAAAAAAAAAAAAAAAA",
   "incomplete_details": null,
   "instructions": null,
@@ -965,6 +1174,10 @@ POST /v1/responses
   "created_at": 1767225600,
   "error": null,
   "frequency_penalty": 0.0,
+  "helpingio:context": {
+    "stored_tokens": 35,
+    "window_tokens": 8000
+  },
   "id": "resp_ZXhhbXBsZS9mYy90b29sLW91dHB1dC1jb250aW51YXRpb24AAAAAAA",
   "incomplete_details": null,
   "instructions": null,
@@ -1095,6 +1308,10 @@ POST /v1/responses
     "created_at": 1767225600,
     "error": null,
     "frequency_penalty": 0.0,
+    "helpingio:context": {
+      "stored_tokens": 16,
+      "window_tokens": 8000
+    },
     "id": "resp_ZXhhbXBsZS9zdC9zdHJlYW0tdGVybWluYWwAAAAAAAAAAAAAAAAAAA",
     "incomplete_details": null,
     "instructions": null,
@@ -1183,7 +1400,7 @@ POST /v1/chat/completions
 {
   "error": {
     "code": "resource_not_found",
-    "message": "Unknown request URL: /v1/chat/completions. This surface serves /v1/responses, /v1/conversations and /v1/models (Open Responses). Chat Completions is not supported.",
+    "message": "Unknown request URL: /v1/chat/completions. This surface serves /v1/responses, /v1/conversations, /v1/models, /v1/memory and /v1/compactions (Open Responses). Chat Completions is not supported.",
     "param": null,
     "type": "not_found_error"
   }

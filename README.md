@@ -5,9 +5,9 @@ authenticating, the routes, streaming, the tool loop, and which errors are worth
 retrying, with every error code, stream event, limit and captured example behind
 it.
 
-The skill calls the helping.io API (https://api.helping.io/v1, or the address you set in
-HELPINGIO_BASE_URL) with the key in HELPINGIO_API_KEY, and reads docs from
-docs.helping.io. It collects nothing and sends nothing anywhere else.
+The skill is instructions and reference files only. It runs nothing, reads no
+key, and sends nothing anywhere. The code it helps you write calls the
+helping.io API (https://api.helping.io/v1) with your own key.
 
 ## Claude Code
 

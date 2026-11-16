@@ -14,6 +14,7 @@ organization and arrive on every allowed response in the
 | `idempotency_window_hours` | 24 hours | How long an Idempotency-Key is remembered. After it, the key may be used again for a new request. |
 | `keepalive_interval_secs` | 15 seconds | How often a stream sends a keep-alive comment while there is nothing else to send. |
 | `max_output_tokens_min` | 16 tokens | The smallest value max_output_tokens accepts. |
+| `memory_id_max_chars` | 256 characters | The longest a helpingio:memory_id may be. |
 | `metadata_max_key_chars` | 64 characters | The longest a metadata key may be. |
 | `metadata_max_pairs` | 16 pairs | The most key-value pairs metadata may carry. |
 | `metadata_max_value_chars` | 512 characters | The longest a metadata value may be. |
@@ -22,4 +23,5 @@ organization and arrive on every allowed response in the
 | `safety_identifier_max_chars` | 64 characters | The longest a safety_identifier may be. |
 | `stream_deadline_secs` | 300 seconds | The longest a single streamed response stays open. |
 | `sync_timeout_secs` | 90 seconds | How long a non-streaming request waits for a result before it returns the response in progress for you to retrieve later. |
+| `tool_output_timeout_minutes` | 60 minutes | How long a response waits for the output of one of your tool calls before it fails with tool_output_timeout. |
 | `truncation_headroom_pct` | 10 percent | How much of the usable budget truncation auto frees beyond what the turn needs, so the next few turns fit without dropping more. |

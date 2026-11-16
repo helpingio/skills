@@ -18,8 +18,8 @@ an unknown event name as informational and keep reading.
 | `response.refusal.done` |  | The refusal part is complete and carries its text, which is empty when there is no explanation. The response then completes with `response.completed` |
 | `response.function_call_arguments.delta` |  | A chunk of a function call's JSON arguments |
 | `response.function_call_arguments.done` |  | The complete arguments for that call |
-| `response.reasoning_text.delta` |  | A chunk of reasoning content, when the model produces reasoning |
-| `response.reasoning_text.done` |  | The complete reasoning content |
+| `response.reasoning.delta` |  | A chunk of reasoning content, when the model produces reasoning |
+| `response.reasoning.done` |  | The complete reasoning content |
 | `response.content_part.done` |  | A content part inside a message closed |
 | `response.output_item.done` |  | An output item closed |
 | `response.completed` | Yes | The payload is the full response object, including `usage` |
@@ -39,5 +39,5 @@ Do not wait for one of them.
 | `response.output_text.annotation.added` | Output text is not annotated here, so `annotations` on a text part is always empty |
 | `response.reasoning_summary_part.added` | Reasoning is not summarized. The reasoning item opens with `response.output_item.added` |
 | `response.reasoning_summary_part.done` | Reasoning is not summarized. The reasoning item closes with `response.output_item.done` |
-| `response.reasoning_summary_text.delta` | Reasoning is not summarized. The reasoning itself streams on `response.reasoning_text.delta` |
-| `response.reasoning_summary_text.done` | Reasoning is not summarized. The complete reasoning arrives on `response.reasoning_text.done` |
+| `response.reasoning_summary_text.delta` | Reasoning is not summarized. The reasoning itself streams on `response.reasoning.delta` |
+| `response.reasoning_summary_text.done` | Reasoning is not summarized. The complete reasoning arrives on `response.reasoning.done` |
