@@ -20,8 +20,9 @@ organization and arrive on every allowed response in the
 | `metadata_max_value_chars` | 512 characters | The longest a metadata value may be. |
 | `retrieve_burst` | 300 requests | How many requests to retrieve a response or to use the Conversations API, deletes aside, one organization may make at once. |
 | `retrieve_per_second` | 5 requests per second | The sustained rate of those requests once the burst is spent. |
-| `safety_identifier_max_chars` | 64 characters | The longest a safety_identifier may be. |
+| `safety_identifier_max_chars` | 64 characters | The longest a safety_identifier, or the user it replaces, may be. |
 | `stream_deadline_secs` | 300 seconds | The longest a single streamed response stays open. |
 | `sync_timeout_secs` | 90 seconds | How long a non-streaming request waits for a result before it returns the response in progress for you to retrieve later. |
 | `tool_output_timeout_minutes` | 60 minutes | How long a response waits for the output of one of your tool calls before it fails with tool_output_timeout. |
 | `truncation_headroom_pct` | 10 percent | How much of the usable budget truncation auto frees beyond what the turn needs, so the next few turns fit without dropping more. |
+| `unknown_fields_named_max` | 16 fields | The most unknown request fields one response names in helpingio:warnings. Any more are accepted all the same and reported together, unnamed. |
