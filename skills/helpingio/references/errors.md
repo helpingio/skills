@@ -81,4 +81,4 @@ carried by the response object arrives as an `error` event.
 
 | `code` | `type` | Meaning |
 | --- | --- | --- |
-| `response_unresolved` | `server_error` | The stream ended before a result was ready. The response may still finish: retrieve it by the id response.created carried. Retrying without the same Idempotency-Key starts a second response. |
+| `response_unresolved` | `server_error` | The stream ended before the final state was known. The response may still finish. On /v1, retrieve it by its id. |

@@ -25,7 +25,7 @@ an unknown event name as informational and keep reading.
 | `response.completed` | Yes | The payload is the full response object, including `usage` |
 | `response.failed` | Yes | The response object carries `error.code` and `error.message` |
 | `response.incomplete` | Yes | The response stopped early, for example at `max_output_tokens`. Read `incomplete_details.reason` |
-| `error` | Yes | The final state was not known when the stream ended, with code `response_unresolved`. The response may still complete: retrieve it by id, or retry |
+| `error` | Yes | The stream ended before the final state was known. The response may still finish. On /v1, retrieve it by its id. |
 
 ## Events that never arrive
 
