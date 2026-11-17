@@ -101,7 +101,7 @@ Set `"stream": true` for server-sent events. The sequence is ordered and ends
 in exactly one terminal event.
 
 A quiet stream sends a comment frame every 15 seconds. A stream stays open for
-at most 300 seconds, then closes with its terminal event. See
+at most 3600 seconds, then closes with its terminal event. See
 `references/events.md` for every event name.
 
 A non-streaming request waits at most 90 seconds, then returns the
