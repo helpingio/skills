@@ -2,8 +2,8 @@
 
 This project calls the helping.io API.
 
-- **Wire format.** Open Responses compatible. Use an official OpenAI SDK, an
-  OpenAI-style client or any Open Responses client; no custom integration is
+- **Wire format.** Open Responses compatible. Use an official OpenAI SDK or any
+  other Open Responses client; no custom integration is
   needed.
 - **Base URL.** `https://api.helping.io/v1`. Point the SDK at the `/v1` prefix, not at
   the host.

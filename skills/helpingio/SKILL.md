@@ -6,7 +6,7 @@ description: "Call the helping.io API (Open Responses compatible, at https://api
 # helping.io API
 
 helping.io is an Open Responses compatible API. It works with the official
-OpenAI SDKs and other OpenAI-style clients, without a custom integration.
+OpenAI SDKs and other Open Responses clients, without a custom integration.
 
 ## Authenticate
 
@@ -54,6 +54,9 @@ Point the SDK's base URL at the `/v1` prefix, not at the host on its own.
 
 Every other path under `/v1` answers `404` in the standard error envelope,
 including `/v1/chat/completions`, which is not supported.
+
+Connecting a coding app such as Cline, Kilo or opencode, which resends the
+whole conversation, is a different base URL: https://docs.helping.io/coding-apps/.
 
 ## Create a response
 
